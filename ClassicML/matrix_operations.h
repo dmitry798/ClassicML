@@ -7,27 +7,35 @@ class Matrix
 {
 private:
 
-	int lenght, width;
+	int rows, cols;
 
-	int* matrix;
+	int** matrix;
 
 public:
 
-	Matrix(int* matrix, int lenght, int width);
+	Matrix(int rows, int cols);
 
-	int get_lenght();
+	Matrix(int** matrix);
 
-	int get_width();
+	Matrix(Matrix& matrix);
 
-	Matrix& operator+ (const Matrix& other);
+	int get_rows();
 
-	Matrix& operator- (const Matrix& other);
+	int get_cols();
 
-	Matrix& operator* (const Matrix& other);
+	int operator() (int i, int j);
 
-	Matrix& operator/ (const Matrix& other);
+	Matrix operator+= (Matrix& other);
 
-	Matrix& transponation(const Matrix& matrix);
+	Matrix operator+ (const Matrix& other);
+
+	Matrix operator- (const Matrix& other);
+
+	Matrix operator* (Matrix& other);
+
+	Matrix operator/ (const Matrix& other);
+
+	Matrix transponation(const Matrix& matrix);
 
 	void determinant(const Matrix& matrix);
 
