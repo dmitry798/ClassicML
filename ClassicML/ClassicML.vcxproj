@@ -127,11 +127,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="fit.cpp" />
     <ClCompile Include="matrix_operations.cpp" />
     <ClCompile Include="models.cpp" />
     <ClCompile Include="matrix_operations.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="fit.h" />
     <ClInclude Include="models.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

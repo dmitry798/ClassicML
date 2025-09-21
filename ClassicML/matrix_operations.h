@@ -1,46 +1,116 @@
 #pragma once
 #include <iostream>
-using std::cin;
-using std::cout;
+#include <cmath>
+using std::cin; 
+using std::cout; 
+using std::endl;
+using std::move;
+using std::string;
 
 class Matrix
 {
 private:
 
-	int rows, cols;
+	int rows, cols, dim;
 
-	int** matrix;
+	string name;
+
+	double* matrix;
 
 public:
 
-	Matrix(int rows, int cols);
+	//конструктор по умолчанию
+	Matrix();
 
-	Matrix(int** matrix);
+	//констурктор 1
+	Matrix(const int rows, const int cols, string name = "");
 
-	Matrix(Matrix& matrix);
+	//конструктор 2
+	Matrix(double** matrix, int rows, int cols, string name = "");
 
-	int get_rows();
+	//конструктор копирования
+	Matrix(const Matrix& matrix);
 
-	int get_cols();
+	//конструктор перемещения
+	Matrix(Matrix&& other) noexcept;
 
-	int operator() (int i, int j);
+	//получение кол-ва строк
+	int get_rows() const;
 
-	Matrix operator+= (Matrix& other);
+	//получение кол-ва колонок
+	int get_cols() const;
 
-	Matrix operator+ (const Matrix& other);
+	//получение размерности
+	int get_dim() const;
 
-	Matrix operator- (const Matrix& other);
+	//оператор ()
+	double& operator() (const int i, const int j) const;
 
-	Matrix operator* (Matrix& other);
+	//оператор суммы матриц
+	Matrix operator+ (const Matrix& other) const;
 
-	Matrix operator/ (const Matrix& other);
+	//оператор разности матриц
+	Matrix operator- (const Matrix& other) const;
 
-	Matrix transponation(const Matrix& matrix);
+	//оператор умножения матриц
+	Matrix operator* (const Matrix& other) const;
 
-	void determinant(const Matrix& matrix);
+	//оператор суммы со скаляром
+	Matrix operator+ (double value) const;
 
-	int reshape(const Matrix& matrix);
+	//оператор вычитания скаляра
+	Matrix operator- (double value) const;
 
+	//оператор умножения на скаляр
+	Matrix operator* (double value) const;
+
+	//оператор деления на скаляр
+	Matrix operator/ (double value) const;
+
+	//оператор присваивания
+	Matrix& operator= (const Matrix& other) noexcept;
+
+	//оператор перемещения
+	Matrix& operator= (Matrix&& other) noexcept;
+
+	//транспонирование
+	Matrix transpose() const;
+
+	//генерация рандомных значений в матрице
+	void random();
+
+	//перемешивание строк в матрице
+	void random_shuffle(Matrix& other);
+
+	//вывод размерности матрицы
+	void reshape() const;
+
+	//вывод матрицы
+	void print() const;
+
+	//мат ожидание
+	Matrix& mean_(const Matrix& x);
+
+	//стандартное отклонение
+	Matrix& std_(const Matrix& x, const Matrix& mean);
+
+	//деструктор
 	~Matrix();
 
+private:
+	
+	//выделение памяти
+	void allocate_memory();
+
+	//освобождение памяти
+	void free_memory();
+
+	//копирование матрицы в класс
+	void copy_data(double** matrix);
+
+	//копирование матриц одного класса
+	void copy_from(const Matrix& other);
+
+	//заполнение матрицы нулями
+	void zeros();
 };
