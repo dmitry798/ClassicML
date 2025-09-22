@@ -48,7 +48,7 @@ void LinearRegression::normalizer()
 
 void LinearRegression::split(double ratio)
 {
-	X.random_shuffle(Y);
+	//X.random_shuffle(Y);
 	int rows_train = (int)(X.get_rows() * ratio);
 	int rows_test = X.get_rows() - rows_train;
 
@@ -123,13 +123,13 @@ Matrix LinearRegression::denorma(const Matrix& z, const Matrix& mean_z, const Ma
 
 void LinearRegression::transform(const Matrix& Z_train, const Matrix& Z_test, Matrix& Z_train_norm, Matrix& Z_test_norm, Matrix& mean_z, Matrix& std_z)
 {
-	mean_z.mean_(Z_train);
-	std_z.std_(Z_train, mean_z);
+	mean_z.mean(Z_train);
+	std_z.std(Z_train, mean_z);
 
-	Z_train_norm = Matrix(Z_train.get_rows(), Z_train.get_cols());
+	Z_train_norm = Matrix(Z_train.get_rows(), Z_train.get_cols(), "train_norm");
 	Z_train_norm = norma(Z_train, mean_z, std_z);
 
-	Z_test_norm = Matrix(Z_test.get_rows(), Z_test.get_cols());
+	Z_test_norm = Matrix(Z_test.get_rows(), Z_test.get_cols(), "test_norm");
 	Z_test_norm = norma(Z_test, mean_z, std_z);
 }
 
@@ -229,11 +229,73 @@ int main()
 	LinearRegression model(X, Y);
 	model.split(0.7);
 	model.normalizer();
-	model.train(0.01, 55);
+	/*model.train(0.01, 55);
 	model.predict().print();
-	cout << model.loss() << endl;
+	cout << model.loss() << endl;*/
+	model.SVD().print();
 
 
 	free_memory_(x, train_rows_x);
 	free_memory_(y, train_rows_y);
+}
+
+
+
+
+Matrix LinearRegression::SVD()
+{
+	Matrix a(X_train.get_cols(), 1, "a");
+	a.random();
+	Matrix b(1, X_train.get_rows(), "b");
+	b.random();
+	Matrix X_centred(X_train.get_rows(), X_train.get_cols(), "X_centred");
+	mean_x.mean(X_train);
+	Matrix P(X_train.get_rows(), X_train.get_cols(), "P");
+	Matrix sum_P(X_train.get_rows(), X_train.get_cols(), "sum_P");
+	Matrix Error(X_train.get_rows(), X_train.get_cols(), "Error");
+	double F = 1.0;
+
+	//центровка X_train
+	for (int i = 0; i < X_train.get_cols(); i++)
+	{
+		for (int j = 0; j < X_train.get_rows(); j++)
+		{
+			double a = X_train(j, i) - mean_x(i, 0);
+			X_centred(j, i) = X_train(j, i) - mean_x(i, 0);
+		}
+	}
+	Matrix X_current = X_centred;
+	//"обучение"
+	while (F > 0.01)
+	{
+		for (int i = 0; i < X_current.get_rows(); i++)
+		{
+			double a_quad = 0.0;
+			for (int j = 0; j < X_current.get_cols(); j++)
+			{
+				a_quad += a(j, 0) * a(j, 0);
+				b(0, i) += X_current(i, j) * a(j, 0);
+			}
+			b(0, i) /= a_quad;
+		}
+
+		for (int i = 0; i < X_current.get_cols(); i++)
+		{
+			double b_quad = 0.0;
+			for (int j = 0; j < X_current.get_rows(); j++)
+			{
+				b_quad += b(0, j) * b(0, j);
+				a(i, 0) += X_current(j, i) * b(0, j);
+			}
+			a(i, 0) /= b_quad;
+		}
+
+		P = a * b;
+		X_current = X_current - P;
+		Error = X_current - P;
+		int er = Error.len();
+		F = abs(0.5 * er * er);
+		sum_P = sum_P + P;
+	}
+	return sum_P;
 }

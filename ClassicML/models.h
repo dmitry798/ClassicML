@@ -33,6 +33,9 @@ public:
 	//epoch - количество эпох
 	void train(double learning_rate, int epoch);
 
+	//СВД-разложение...
+	Matrix SVD();
+
 	//"предсказания" модели
 	Matrix predict();
 

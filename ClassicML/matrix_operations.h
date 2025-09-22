@@ -89,10 +89,13 @@ public:
 	void print() const;
 
 	//мат ожидание
-	Matrix& mean_(const Matrix& x);
+	Matrix& mean(const Matrix& x);
 
 	//стандартное отклонение
-	Matrix& std_(const Matrix& x, const Matrix& mean);
+	Matrix& std(const Matrix& x, const Matrix& mean);
+
+	//длина вектора
+	double len();
 
 	//деструктор
 	~Matrix();

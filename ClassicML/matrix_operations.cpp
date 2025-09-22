@@ -132,7 +132,7 @@ Matrix Matrix::operator/(double value) const
 Matrix Matrix::operator+ (const Matrix& other) const
 {
 	Matrix result(rows, cols, "res");
-	if (result.rows == other.rows && result.cols == other.cols)
+	if (result.get_dim() == other.dim)
 	{
 		for (int i = 0; i < dim; i++)
 		{
@@ -204,7 +204,7 @@ Matrix& Matrix::operator= (const Matrix& other) noexcept
 	return *this;
 }
 
-Matrix& Matrix::mean_(const Matrix& x)
+Matrix& Matrix::mean(const Matrix& x)
 {
 	for (int i = 0; i < x.cols; i++)
 	{
@@ -218,7 +218,7 @@ Matrix& Matrix::mean_(const Matrix& x)
 	return *this;
 }
 
-Matrix& Matrix::std_(const Matrix& x, const Matrix& mean)
+Matrix& Matrix::std(const Matrix& x, const Matrix& mean)
 {
 	for (int i = 0; i < x.cols; i++)
 	{
@@ -237,7 +237,11 @@ void Matrix::random()
 {
 	for (int i = 0; i < dim; i++)
 	{
-		matrix[i] = (rand() % 100) / static_cast<double>(113) * 0.1;
+		matrix[i] = (rand() % 100) / static_cast<double>(100);
+	}
+	if (len() < 0.98 || len() > 1.02)
+	{
+		random();
 	}
 }
 
@@ -280,6 +284,17 @@ Matrix Matrix::transpose() const
 		}
 	}
     return result;
+}
+
+double Matrix::len()
+{
+	double len = 0.0;
+	for (int i = 0; i < dim; i++)
+	{
+		len += matrix[i] * matrix[i];
+	}
+	return sqrt(len);
+
 }
 
 void Matrix::allocate_memory()
