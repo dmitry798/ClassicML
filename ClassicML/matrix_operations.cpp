@@ -239,10 +239,6 @@ void Matrix::random()
 	{
 		matrix[i] = (rand() % 100) / static_cast<double>(100);
 	}
-	if (len() < 0.98 || len() > 1.02)
-	{
-		random();
-	}
 }
 
 void Matrix::random_shuffle(Matrix& other)

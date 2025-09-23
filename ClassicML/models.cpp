@@ -229,10 +229,11 @@ int main()
 	LinearRegression model(X, Y);
 	model.split(0.7);
 	model.normalizer();
-	/*model.train(0.01, 55);
+	model.train(0.008, 550);
 	model.predict().print();
-	cout << model.loss() << endl;*/
+	cout << model.loss() << endl << endl;
 	model.SVD().print();
+	cout << model.loss() << endl << endl;
 
 
 	free_memory_(x, train_rows_x);
@@ -244,58 +245,110 @@ int main()
 
 Matrix LinearRegression::SVD()
 {
-	Matrix a(X_train.get_cols(), 1, "a");
-	a.random();
-	Matrix b(1, X_train.get_rows(), "b");
-	b.random();
 	Matrix X_centred(X_train.get_rows(), X_train.get_cols(), "X_centred");
+	Matrix X_test_centred(X_test.get_rows(), X_test.get_cols(), "X_centred");
+	Matrix Y_centred(Y_train.get_rows(), Y_train.get_cols(), "Y_centred");
 	mean_x.mean(X_train);
-	Matrix P(X_train.get_rows(), X_train.get_cols(), "P");
 	Matrix sum_P(X_train.get_rows(), X_train.get_cols(), "sum_P");
-	Matrix Error(X_train.get_rows(), X_train.get_cols(), "Error");
-	double F = 1.0;
 
 	//центровка X_train
 	for (int i = 0; i < X_train.get_cols(); i++)
 	{
 		for (int j = 0; j < X_train.get_rows(); j++)
 		{
-			double a = X_train(j, i) - mean_x(i, 0);
 			X_centred(j, i) = X_train(j, i) - mean_x(i, 0);
 		}
 	}
-	Matrix X_current = X_centred;
-	//"обучение"
-	while (F > 0.01)
+	//центровка X_test_train
+	for (int i = 0; i < X_test.get_cols(); i++)
 	{
-		for (int i = 0; i < X_current.get_rows(); i++)
+		for (int j = 0; j < X_test.get_rows(); j++)
 		{
-			double a_quad = 0.0;
-			for (int j = 0; j < X_current.get_cols(); j++)
-			{
-				a_quad += a(j, 0) * a(j, 0);
-				b(0, i) += X_current(i, j) * a(j, 0);
-			}
-			b(0, i) /= a_quad;
+			X_test_centred(j, i) = X_test(j, i) - mean_x(i, 0);
 		}
-
-		for (int i = 0; i < X_current.get_cols(); i++)
-		{
-			double b_quad = 0.0;
-			for (int j = 0; j < X_current.get_rows(); j++)
-			{
-				b_quad += b(0, j) * b(0, j);
-				a(i, 0) += X_current(j, i) * b(0, j);
-			}
-			a(i, 0) /= b_quad;
-		}
-
-		P = a * b;
-		X_current = X_current - P;
-		Error = X_current - P;
-		int er = Error.len();
-		F = abs(0.5 * er * er);
-		sum_P = sum_P + P;
 	}
-	return sum_P;
+	//центровка Y_train
+	for (int i = 0; i < Y_train.get_cols(); i++)
+	{
+		for (int j = 0; j < Y_train.get_rows(); j++)
+		{
+			Y_centred(j, i) = Y_train(j, i) - mean_y(i, 0);
+		}
+	}
+	Matrix X_current = X_centred;
+	int comp = std::min(X_train.get_rows(), X_train.get_cols());
+	int max_comp = std::min(X_train.get_rows(), X_train.get_cols());
+	U = Matrix(X_train.get_rows(), max_comp, "U");
+	s = Matrix(max_comp, max_comp, "S");
+	VT = Matrix(max_comp, X_train.get_cols(), "VT");
+	int k = 0;
+
+	//"обучение"
+	while (X_current.len() > 1e-10 && comp > 0)
+	{
+		Matrix a(1, X_train.get_cols(), "a");
+		a.random();
+		Matrix b(X_train.get_rows(), 1, "b");
+		a = a / a.len();
+
+		double F = 1e10;
+		double F_prev = 2e10;
+
+		while ((F_prev - F) / F > 0.000001)
+		{
+			F_prev = F;
+			for (int i = 0; i < X_current.get_rows(); i++)
+			{
+				double a_quad = 0.0;
+				b(i, 0) = 0;
+				for (int j = 0; j < X_current.get_cols(); j++)
+				{
+					a_quad += a(0, j) * a(0, j);
+					b(i, 0) += X_current(i, j) * a(0, j);
+				}
+				b(i, 0) /= a_quad;
+			}
+
+			for (int i = 0; i < X_current.get_cols(); i++)
+			{
+				double b_quad = 0.0;
+				a(0, i) = 0.0;
+				for (int j = 0; j < X_current.get_rows(); j++)
+				{
+					b_quad += b(j, 0) * b(j, 0);
+					a(0, i) += X_current(j, i) * b(j, 0);
+				}
+				a(0, i) /= b_quad;
+			}
+			Matrix P = b * a;
+			Matrix Error = X_current - P;
+			double er = Error.len();
+			F = 0.5 * er * er;
+		}
+		Matrix u_k = b / b.len();
+		Matrix v_k = a / a.len();
+
+		// Заполняем U, S, VT
+		for (int i = 0; i < U.get_rows(); i++) {
+			U(i, k) = u_k(i, 0);
+		}
+
+		s(k, k) = 1 / (b.len() * a.len() + 10e-2) ;
+		for (int j = 0; j < VT.get_cols(); j++) {
+			VT(k, j) = v_k(0, j);
+		}
+		Matrix P = b * a;
+		sum_P = sum_P + P;
+		X_current = X_current - P;
+		comp--;
+		k++;
+	}
+	W = VT.transpose() * s * U.transpose() * Y_centred;
+	Matrix result = X_test_centred * W;
+	for (int i = 0; i < result.get_cols(); i++) {
+		for (int j = 0; j < result.get_rows(); j++) {
+			result(j, i) += mean_y(i, 0);
+		}
+	}
+	return result;
 }

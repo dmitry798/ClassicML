@@ -23,6 +23,10 @@ private:
 	Matrix mean_y;
 	Matrix std_y;
 
+	Matrix U; 
+	Matrix s; 
+	Matrix VT;
+
 public:
 
 	//конструктор линейной регрессии
