@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 #include <cmath>
-using std::cin; 
 using std::cout; 
 using std::endl;
 using std::move;
@@ -23,27 +22,32 @@ public:
 	Matrix();
 
 	//констурктор 1
+	//принимает на вход кол-во строк и столбцов
 	Matrix(const int rows, const int cols, string name = "");
 
 	//конструктор 2
+	//принимает на вход матрицу, кол-во строк и столбцов
 	Matrix(double** matrix, int rows, int cols, string name = "");
 
 	//конструктор копирования
+	//принимает на вход матрицу того же класса
 	Matrix(const Matrix& matrix);
 
 	//конструктор перемещения
+	//принимает на вход r-value матрицу того же класса
 	Matrix(Matrix&& other) noexcept;
 
 	//получение кол-ва строк
-	int get_rows() const;
+	int getRows() const;
 
 	//получение кол-ва колонок
-	int get_cols() const;
+	int getCols() const;
 
 	//получение размерности
-	int get_dim() const;
+	int getDim() const;
 
 	//оператор ()
+	//принимает на вход i строку и j столбец
 	double& operator() (const int i, const int j) const;
 
 	//оператор суммы матриц
@@ -76,7 +80,7 @@ public:
 	//транспонирование
 	Matrix transpose() const;
 
-	//генерация рандомных значений в матрице
+	//генерация рандомных значений в матрице в пределах от 0 до 1
 	void random();
 
 	//перемешивание строк в матрице
@@ -93,6 +97,9 @@ public:
 
 	//стандартное отклонение
 	Matrix& std(const Matrix& x, const Matrix& mean);
+
+	//очистка матрицы
+	void clear();
 
 	//длина вектора
 	double len();

@@ -1,23 +1,29 @@
 #pragma once
 #include "matrix_operations.h"
+#include "preprocessor.h"
 
 class Fit
 {
 private:
-	Matrix X;
+	Data& data;
+
 	Matrix W;
-	Matrix Y;
+
+	//äëÿ ÑÂÄ
+	Matrix U;
+	Matrix s;
+	Matrix VT;
 public:
 
-	Fit();
+	/*Fit();*/
 
-	void gradient_descent(double learning_rate, int epoch);
+	Fit(Data& shareData);
 
-	void stochastic_gradient_descent();
+	/*void stochastic_gradient_descent(double learning_rate, int epoch);
 
-	void nesterov();
+	void nesterov();*/
 
-	void SVD();
+	Matrix svd();
 
-	~Fit();
+	/*~Fit();*/
 };
