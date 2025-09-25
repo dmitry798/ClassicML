@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "matrix_operations.h"
 #include "preprocessor.h"
 #include "fit.h"
@@ -25,19 +25,19 @@ class LinearRegression: public Models
 {
 public:
 
-	//конструктор линейной регрессии
+	//РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Р»РёРЅРµР№РЅРѕР№ СЂРµРіСЂРµСЃСЃРёРё
 	LinearRegression(Data& shareData);
 
-	//обучение
+	//РѕР±СѓС‡РµРЅРёРµ
 	void train() override;
 
-	//тестирование
+	//С‚РµСЃС‚РёСЂРѕРІР°РЅРёРµ
 	Matrix predict() const override;
 
-	//"предсказания"
+	//"РїСЂРµРґСЃРєР°Р·Р°РЅРёСЏ"
 	Matrix predict(Matrix& X_predict) const override;
 
-	////ошибка
+	////РѕС€РёР±РєР°
 	//double loss() override;
 
 	~LinearRegression();

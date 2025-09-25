@@ -1,4 +1,4 @@
-#include "fit.h"
+п»ї#include "fit.h"
 
 Fit::Fit(Data& shareData): data(shareData){}
 
@@ -7,7 +7,7 @@ Matrix Fit::svd()
 	Matrix X_current(data.X_train.getRows(), data.X_train.getCols(), "X_centred");
 	Matrix sum_P(data.X_train.getRows(), data.X_train.getCols(), "X_centred");
 	data.mean_x.mean(data.X_train);
-	//центровка X_train
+	//С†РµРЅС‚СЂРѕРІРєР° X_train
 	for (int i = 0; i < data.X_train.getCols(); i++)
 	{
 		for (int j = 0; j < data.X_train.getRows(); j++)
@@ -18,7 +18,7 @@ Matrix Fit::svd()
 
 	int comp = std::min(data.X_train.getRows(), data.X_train.getCols());
 
-	//разложение матрицы X_train на 3 матрицы
+	//СЂР°Р·Р»РѕР¶РµРЅРёРµ РјР°С‚СЂРёС†С‹ X_train РЅР° 3 РјР°С‚СЂРёС†С‹
 	Matrix U(data.X_train.getRows(), comp, "U");
 	Matrix s(comp, comp, "S");
 	Matrix VT(comp, data.X_train.getCols(), "VT");
@@ -28,7 +28,7 @@ Matrix Fit::svd()
 
 	int iter = 0;
 
-	//"обучение"
+	//"РѕР±СѓС‡РµРЅРёРµ"
 	while (X_current.len() > 1e-10 && comp > 0)
 	{
 		a.clear(); b.clear();
@@ -71,7 +71,7 @@ Matrix Fit::svd()
 
 		double sigma = b.len() * a.len();
 
-		//заполняем U, S, VT
+		//Р·Р°РїРѕР»РЅСЏРµРј U, S, VT
 		for (int i = 0; i < U.getRows(); i++)
 			U(i, iter) = b(i, 0) / b.len();
 

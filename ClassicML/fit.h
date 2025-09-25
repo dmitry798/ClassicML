@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "matrix_operations.h"
 #include "preprocessor.h"
 
@@ -9,7 +9,7 @@ private:
 
 	Matrix W;
 
-	//äëÿ ÑÂÄ
+	//Ğ´Ğ»Ñ Ğ¡Ğ’Ğ”
 	Matrix U;
 	Matrix s;
 	Matrix VT;

@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "matrix_operations.h"
 
 struct Data
@@ -31,22 +31,22 @@ private:
 	
 	Data& data;
 
-	//высчитывает среднее значение и СКО, вызывает функцию norma
+	//РІС‹СЃС‡РёС‚С‹РІР°РµС‚ СЃСЂРµРґРЅРµРµ Р·РЅР°С‡РµРЅРёРµ Рё РЎРљРћ, РІС‹Р·С‹РІР°РµС‚ С„СѓРЅРєС†РёСЋ norma
 	void transform(const Matrix& Z_train, const Matrix& Z_test, Matrix& Z_train_norm, Matrix& Z_test_norm, Matrix& mean_z, Matrix& std_z);
 
-	//нормализация данных
+	//РЅРѕСЂРјР°Р»РёР·Р°С†РёСЏ РґР°РЅРЅС‹С…
 	Matrix normalize(const Matrix& z, const Matrix& mean_z, const Matrix& std_z);
 
 public:
 
 	StandartScaler(Data& sharedData);
 
-	//денормализация данных для "предсказаний"
+	//РґРµРЅРѕСЂРјР°Р»РёР·Р°С†РёСЏ РґР°РЅРЅС‹С… РґР»СЏ "РїСЂРµРґСЃРєР°Р·Р°РЅРёР№"
 	static Matrix denormalize(const Matrix& z, const Matrix& mean_z, const Matrix& std_z);
 
-	//нормализация данных на обучающей и валидационной выборке
+	//РЅРѕСЂРјР°Р»РёР·Р°С†РёСЏ РґР°РЅРЅС‹С… РЅР° РѕР±СѓС‡Р°СЋС‰РµР№ Рё РІР°Р»РёРґР°С†РёРѕРЅРЅРѕР№ РІС‹Р±РѕСЂРєРµ
 	void standartNormalize();
 
-	//разделение данных из общей выборки на обучающую и валидационную
+	//СЂР°Р·РґРµР»РµРЅРёРµ РґР°РЅРЅС‹С… РёР· РѕР±С‰РµР№ РІС‹Р±РѕСЂРєРё РЅР° РѕР±СѓС‡Р°СЋС‰СѓСЋ Рё РІР°Р»РёРґР°С†РёРѕРЅРЅСѓСЋ
 	void split(double ratio);
 };
