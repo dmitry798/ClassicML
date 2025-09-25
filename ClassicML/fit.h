@@ -9,10 +9,6 @@ private:
 
 	Matrix W;
 
-	//для СВД
-	Matrix U;
-	Matrix s;
-	Matrix VT;
 public:
 
 	/*Fit();*/
