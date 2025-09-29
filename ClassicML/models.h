@@ -34,7 +34,7 @@ public:
 	//тестирование
 	Matrix predict() const override;
 
-	//"предсказания"
+	//прогноз
 	Matrix predict(Matrix& X_predict) const override;
 
 	////ошибка

@@ -10,7 +10,13 @@ LinearRegression::LinearRegression(Data& shareData):Models(shareData) {}
 
 void LinearRegression::train()
 {
-	W = fit.svd();
+	Matrix U;
+	Matrix s;
+	Matrix VT;
+
+	fit.svd(U, s, VT);
+
+	W = VT.transpose() * s * U.transpose() * data.Y_train;
 }
 
 Matrix LinearRegression::predict() const

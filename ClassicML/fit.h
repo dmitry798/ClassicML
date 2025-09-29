@@ -19,7 +19,7 @@ public:
 
 	void nesterov();*/
 
-	Matrix svd();
+	void svd(Matrix& U, Matrix& s, Matrix& VT);
 
 	/*~Fit();*/
 };

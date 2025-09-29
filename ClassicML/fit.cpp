@@ -2,7 +2,7 @@
 
 Fit::Fit(Data& shareData): data(shareData){}
 
-Matrix Fit::svd()
+void Fit::svd(Matrix& U, Matrix& s, Matrix& VT)
 {
 	Matrix X_current(data.X_train.getRows(), data.X_train.getCols(), "X_centred");
 	Matrix sum_P(data.X_train.getRows(), data.X_train.getCols(), "X_centred");
@@ -19,9 +19,9 @@ Matrix Fit::svd()
 	int comp = std::min(data.X_train.getRows(), data.X_train.getCols());
 
 	//разложение матрицы X_train на 3 матрицы
-	Matrix U(data.X_train.getRows(), comp, "U");
-	Matrix s(comp, comp, "S");
-	Matrix VT(comp, data.X_train.getCols(), "VT");
+	U = Matrix(data.X_train.getRows(), comp, "U");
+	s = Matrix(comp, comp, "S");
+	VT = Matrix(comp, data.X_train.getCols(), "VT");
 
 	Matrix a(1, data.X_train.getCols(), "a");
 	Matrix b(data.X_train.getRows(), 1, "b");
@@ -90,6 +90,6 @@ Matrix Fit::svd()
 		iter++;
 		sum_P = sum_P + b * a;
 	}
-	W = VT.transpose() * s * U.transpose() * data.Y_train;
-	return W;
+	//W = VT.transpose() * s * U.transpose() * data.Y_train;
+	//return W;
 }
