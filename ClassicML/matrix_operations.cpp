@@ -47,20 +47,11 @@ Matrix::Matrix(Matrix&& other) noexcept : rows(other.rows), cols(other.cols), na
 	//cout << "Const-move " << name << endl;
 }
 
-int Matrix::getRows() const 
-{
-	return this->rows;
-}
+int Matrix::getRows() const { return this->rows; }
 
-int Matrix::getCols() const
-{
-	return this->cols;
-}
+int Matrix::getCols() const { return this->cols; }
 
-int Matrix::getDim() const
-{
-	return this->dim;
-}
+int Matrix::getDim() const { return this->dim; }
 
 double& Matrix::operator() (int i, int j) const
 {
@@ -69,28 +60,35 @@ double& Matrix::operator() (int i, int j) const
 	return matrix[i * cols + j];
 }
 
-Matrix Matrix::operator* (const Matrix& other)  const
+double& Matrix::operator[] (const int i) const
 {
-	int other_cols = other.cols;
-	if(cols != other.rows)
-		throw std::out_of_range("this.rows != other.cols OR this.cols != other.rows");
-
-	Matrix result(rows, other_cols, "res*m");
-	for (int i = 0; i < rows; i++)
-	{
-		double* res = result.matrix + i * other_cols;
-		for (int j = 0; j < cols; j++)
-		{
-			const double* oth = other.matrix + j * other_cols;
-			double a = matrix[i * cols + j];
-			for (int k = 0; k < other_cols; k++)
-			{
-				res[k] += a * oth[k];
-			}
-		}
-	}
-	return result;
+	if (i >= dim || i < 0)
+		throw std::out_of_range("Matrix index out of bounds");
+	return matrix[i];
 }
+
+//Matrix Matrix::operator* (const Matrix& other)  const
+//{
+//	int other_cols = other.cols;
+//	if(cols != other.rows)
+//		throw std::out_of_range("this.rows != other.cols OR this.cols != other.rows");
+//
+//	Matrix result(rows, other_cols, "res*m");
+//	for (int i = 0; i < rows; i++)
+//	{
+//		double* res = result.matrix + i * other_cols;
+//		for (int j = 0; j < cols; j++)
+//		{
+//			const double* oth = other.matrix + j * other_cols;
+//			double a = matrix[i * cols + j];
+//			for (int k = 0; k < other_cols; k++)
+//			{
+//				res[k] += a * oth[k];
+//			}
+//		}
+//	}
+//	return result;
+//}
 
 Matrix Matrix::operator*(double value) const
 {
@@ -136,35 +134,35 @@ Matrix Matrix::operator/(double value) const
 	return result;
 }
 
-Matrix Matrix::operator+ (const Matrix& other) const
-{
-	Matrix result(rows, cols, "res+m");
-	if (result.dim == other.dim)
-	{
-		for (int i = 0; i < dim; i++)
-		{
-			result.matrix[i] = matrix[i] + other.matrix[i];
-		}
-	}
-	else
-		throw std::out_of_range("Matrix index out of bounds");
-	return result;
-}
+//Matrix Matrix::operator+ (const Matrix& other) const
+//{
+//	Matrix result(rows, cols, "res+m");
+//	if (result.dim == other.dim)
+//	{
+//		for (int i = 0; i < dim; i++)
+//		{
+//			result.matrix[i] = matrix[i] + other.matrix[i];
+//		}
+//	}
+//	else
+//		throw std::out_of_range("Matrix index out of bounds");
+//	return result;
+//}
  
-Matrix Matrix::operator- (const Matrix& other) const
-{
-	Matrix result(rows, cols, "res-m");
-	if (result.dim == other.dim)
-	{
-		for (int i = 0; i < dim; i++)
-		{
-			result.matrix[i] = matrix[i] - other.matrix[i];
-		}
-	}
-	else
-		throw std::out_of_range("Matrix index out of bounds");
-	return result;
-}
+//Matrix Matrix::operator- (const Matrix& other) const
+//{
+//	Matrix result(rows, cols, "res-m");
+//	if (result.dim == other.dim)
+//	{
+//		for (int i = 0; i < dim; i++)
+//		{
+//			result.matrix[i] = matrix[i] - other.matrix[i];
+//		}
+//	}
+//	else
+//		throw std::out_of_range("Matrix index out of bounds");
+//	return result;
+//}
 
 Matrix& Matrix::operator= (Matrix&& other) noexcept
 {
@@ -374,3 +372,85 @@ Matrix::~Matrix()
 		//cout << "deConst " << name << endl;
 		free_memory();
 }
+
+//template <int R, int C>
+//double** copy_static_memory(double(&matrix)[R][C])
+//{
+//	double** dest = new double* [R];
+//	for (int i = 0; i < R; i++)
+//	{
+//		dest[i] = new double[C];
+//	}
+//	for (int i = 0; i < R; i++)
+//	{
+//		for (int j = 0; j < C; j++)
+//		{
+//			dest[i][j] = matrix[i][j];
+//		}
+//	}
+//	return dest;
+//}
+//
+//static void free_memory_(double** matrix, int rows)
+//{
+//	for (int i = 0; i < rows; i++)
+//	{
+//		delete[] matrix[i];
+//	}
+//	delete[] matrix;
+//	matrix = nullptr;
+//}
+
+//int main()
+//{
+//	double a[4][3] = {
+//		{1, 2, 3},
+//		{4, 5, 6},
+//		{7, 8, 9},
+//		{10, 11, 12}
+//	};
+//
+//	double c[1][1] = { {1} };
+//
+//	double f[4][3] = {
+//		{1, 2, 3},
+//		{4, 5, 6},
+//		{7, 8, 9},
+//		{10, 11, 12}
+//	};
+//
+//	double b[3][4] = {
+//	{1, 2, 3, 4},
+//	{5, 6, 7, 8},
+//	{9, 10, 11, 12}
+//	};
+//
+//	double** aa = copy_static_memory(a);
+//	double** bb = copy_static_memory(f);
+//
+//	/*double a[][4] = {
+//		{1.0, 50.0, 1.0, 1.0},
+//		{1.0, 75.0, 2.0, 1.0},
+//		{1.0, 100.0, 3.0, 2.0},
+//		{1.0, 120.0, 3.0, 3.0},
+//		{1.0, 150.0, 4.0, 2.0},
+//		{1.0, 80.0, 2.0, 5.0},
+//		{1.0, 95.0, 3.0, 1.0},
+//		{1.0, 110.0, 3.0, 4.0},
+//		{1.0, 130.0, 4.0, 3.0},
+//		{1.0, 160.0, 5.0, 2.0}
+//	};*/
+//
+//	Matrix A(aa, 4, 3);
+//	Matrix B(bb, 4, 3);
+//	Matrix C;
+//	C = A - 2;
+//	A.print();
+//	/*B.print();*/
+//	C.print();
+//
+//	free_memory_(aa, 4);
+//	free_memory_(bb, 3);
+//
+//	return 0;
+//}

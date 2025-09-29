@@ -65,7 +65,7 @@ void Fit::svd(Matrix& U, Matrix& s, Matrix& VT)
 				a(0, i) /= b_quad;
 			}
 			//					 X - P
-			double er = (X_current - b * a).len();
+			double er = Matrix(X_current - b * a).len();
 			F = 0.5 * er * er;
 		}
 
