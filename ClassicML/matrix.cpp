@@ -1,4 +1,4 @@
-﻿#include "matrix_operations.h"
+﻿#include "matrix.h"
 #include "ctime"
 
 //реализовать исключения!!!
@@ -67,29 +67,6 @@ double& Matrix::operator[] (const int i) const
 	return matrix[i];
 }
 
-//Matrix Matrix::operator* (const Matrix& other)  const
-//{
-//	int other_cols = other.cols;
-//	if(cols != other.rows)
-//		throw std::out_of_range("this.rows != other.cols OR this.cols != other.rows");
-//
-//	Matrix result(rows, other_cols, "res*m");
-//	for (int i = 0; i < rows; i++)
-//	{
-//		double* res = result.matrix + i * other_cols;
-//		for (int j = 0; j < cols; j++)
-//		{
-//			const double* oth = other.matrix + j * other_cols;
-//			double a = matrix[i * cols + j];
-//			for (int k = 0; k < other_cols; k++)
-//			{
-//				res[k] += a * oth[k];
-//			}
-//		}
-//	}
-//	return result;
-//}
-
 Matrix Matrix::operator*(double value) const
 {
 	Matrix result(rows, cols, "res*v");
@@ -133,36 +110,6 @@ Matrix Matrix::operator/(double value) const
 	}
 	return result;
 }
-
-//Matrix Matrix::operator+ (const Matrix& other) const
-//{
-//	Matrix result(rows, cols, "res+m");
-//	if (result.dim == other.dim)
-//	{
-//		for (int i = 0; i < dim; i++)
-//		{
-//			result.matrix[i] = matrix[i] + other.matrix[i];
-//		}
-//	}
-//	else
-//		throw std::out_of_range("Matrix index out of bounds");
-//	return result;
-//}
- 
-//Matrix Matrix::operator- (const Matrix& other) const
-//{
-//	Matrix result(rows, cols, "res-m");
-//	if (result.dim == other.dim)
-//	{
-//		for (int i = 0; i < dim; i++)
-//		{
-//			result.matrix[i] = matrix[i] - other.matrix[i];
-//		}
-//	}
-//	else
-//		throw std::out_of_range("Matrix index out of bounds");
-//	return result;
-//}
 
 Matrix& Matrix::operator= (Matrix&& other) noexcept
 {

@@ -1,19 +1,21 @@
 ﻿#pragma once
-#include "matrix_operations.h"
+#include "matrix.h"
 #include "preprocessor.h"
-#include "fit.h"
+#include "optimization.h"
+#include "errors.h"
+using namespace Data;
 
 class Models
 {
 protected:
 
-	Data& data;
+	Dataset& data;
 	Fit fit;
-	Matrix W;
+	Errors error;
 
 public:
 
-	Models(Data& shareData);
+	Models(Dataset& shareData);
 
 	virtual void train() = 0;
 	virtual Matrix predict() const = 0;
@@ -26,7 +28,7 @@ class LinearRegression: public Models
 public:
 
 	//конструктор линейной регрессии
-	LinearRegression(Data& shareData);
+	LinearRegression(Dataset& shareData);
 
 	//обучение
 	void train() override;
@@ -37,8 +39,8 @@ public:
 	//прогноз
 	Matrix predict(Matrix& X_predict) const override;
 
-	////ошибка
-	//double loss() override;
+	//ошибка
+	void loss();
 
 	~LinearRegression();
 };

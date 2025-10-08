@@ -18,13 +18,13 @@ concept MatrxOp = requires(const A & a)
 template<typename A, typename B>
 struct MatrxSumOp 
 {
-	MatrxSumOp(const A& a, const B& b) : a_(a), b_(b) {}
+	MatrxSumOp(const A& a, const B& b) : a_(a), b_(b), rows(a_.getRows()), cols(a_.getCols()) {}
 
 	const A& a_;
 	const B& b_;
 
-	int rows = a_.getRows();
-	int cols = a_.getCols();
+	int rows;
+	int cols;
 
 	int getRows() const { return rows; }
 
@@ -43,13 +43,13 @@ struct MatrxSumOp
 template<typename A, typename B>
 struct MatrxDifOp 
 {
-	MatrxDifOp(const A& a, const B& b) : a_(a), b_(b) {}
+	MatrxDifOp(const A& a, const B& b) : a_(a), b_(b), rows(a_.getRows()), cols(a_.getCols()) {}
 
 	const A& a_;
 	const B& b_;
 
-	int rows = a_.getRows();
-	int cols = a_.getCols();
+	int rows;
+	int cols;
 
 	int getRows() const { return rows; }
 
@@ -68,13 +68,13 @@ struct MatrxDifOp
 template<typename A, typename B>
 struct MatrxMulOp 
 {
-	MatrxMulOp(const A& a, const B& b) : a_(a), b_(b) {}
+	MatrxMulOp(const A& a, const B& b) : a_(a), b_(b), rows(a_.getRows()), cols(b_.getCols()) {}
 
 	const A& a_;
 	const B& b_;
 
-	int rows = a_.getRows();
-	int cols = b_.getCols();
+	int rows;
+	int cols;
 
 	int getRows() const { return rows; }
 
@@ -88,9 +88,7 @@ struct MatrxMulOp
 			throw std::out_of_range("this.rows != other.cols OR this.cols != other.rows");
 		double sum = 0.0;
 		for (int k = 0; k < a_.getCols(); k++)
-		{
 			sum += a_(i, k) * b_(k, j);
-		}
 		return sum;
 	}
 
@@ -102,26 +100,44 @@ struct MatrxMulOp
 	}
 };
 
+template<typename A>
+struct MatrxDivValOp
+{
+	MatrxDivValOp(const A& a, const double& b) : a_(a), b_(b), rows(a_.getRows()), cols(a_.getCols()) {}
+
+	const A& a_;
+	const double& b_;
+
+	int rows;
+	int cols;
+
+	int getRows() const { return rows; }
+
+	int getCols() const { return cols; }
+
+	int getDim() const { return rows * cols; }
+
+	double operator[](int i) const
+	{
+		return a_[i] / b_;
+	}
+};
+
 //оператор суммы матриц
 template<typename A, typename B>
-MatrxSumOp<A, B> operator+ (const A& matrix, const B& other)
-{
-	return { matrix, other };
-}
+MatrxSumOp<A, B> operator+ (const A& matrix, const B& other) { return { matrix, other }; }
 
 //оператор разности матриц
 template<typename A, typename B>
-MatrxDifOp<A, B> operator- (const A& matrix, const B& other)
-{
-	return { matrix, other };
-}
+MatrxDifOp<A, B> operator- (const A& matrix, const B& other) { return { matrix, other }; }
 
 //оператор умножения матриц
 template<typename A, typename B>
-MatrxMulOp<A, B> operator* (const A& matrix, const B& other)
-{
-	return { matrix, other };
-}
+MatrxMulOp<A, B> operator* (const A& matrix, const B& other) { return { matrix, other }; }
+
+//оператор разности матрицы со скаляром
+template<typename A>
+MatrxDivValOp<A> operator/ (const A& matrix, const double& other) { return { matrix, other }; }
 
 class Matrix
 {

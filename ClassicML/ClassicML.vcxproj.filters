@@ -18,16 +18,22 @@
     <ClCompile Include="models.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="matrix_operations.cpp">
+    <ClCompile Include="matrix.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="matrix_operations.h">
+    <ClCompile Include="matrix.h">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="fit.cpp">
+    <ClCompile Include="optimization.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="preprocessor.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="errors.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,10 +41,19 @@
     <ClInclude Include="models.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="fit.h">
+    <ClInclude Include="optimization.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="preprocessor.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="errors.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="macros.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassicML.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

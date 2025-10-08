@@ -1,30 +1,41 @@
-﻿#include "fit.h"
+﻿#include "optimization.h"
 
-Fit::Fit(Data& shareData): data(shareData){}
+#include "macros.h"
+
+Fit::Fit(Dataset& shareData): data(shareData){}
+
+void Fit::stochastic_gradient_descent(double learning_rate, int epoch)
+{
+
+}
+
+void Fit::nesterov()
+{
+
+}
 
 void Fit::svd(Matrix& U, Matrix& s, Matrix& VT)
 {
-	Matrix X_current(data.X_train.getRows(), data.X_train.getCols(), "X_centred");
-	Matrix sum_P(data.X_train.getRows(), data.X_train.getCols(), "X_centred");
-	data.mean_x.mean(data.X_train);
+	Matrix X_current(X_train.getRows(), X_train.getCols(), "X_centred");
+	mean_x.mean(X_train);
 	//центровка X_train
-	for (int i = 0; i < data.X_train.getCols(); i++)
+	for (int i = 0; i < X_train.getCols(); i++)
 	{
-		for (int j = 0; j < data.X_train.getRows(); j++)
+		for (int j = 0; j < X_train.getRows(); j++)
 		{
-			X_current(j, i) = data.X_train(j, i) - data.mean_x(i, 0);
+			X_current(j, i) = X_train(j, i) - mean_x[i];
 		}
 	}
 
-	int comp = std::min(data.X_train.getRows(), data.X_train.getCols());
+	int comp = std::min(X_train.getRows(), X_train.getCols());
 
 	//разложение матрицы X_train на 3 матрицы
-	U = Matrix(data.X_train.getRows(), comp, "U");
+	U = Matrix(X_train.getRows(), comp, "U");
 	s = Matrix(comp, comp, "S");
-	VT = Matrix(comp, data.X_train.getCols(), "VT");
+	VT = Matrix(comp, X_train.getCols(), "VT");
 
-	Matrix a(1, data.X_train.getCols(), "a");
-	Matrix b(data.X_train.getRows(), 1, "b");
+	Matrix a(1, X_train.getCols(), "a");
+	Matrix b(X_train.getRows(), 1, "b");
 
 	int iter = 0;
 
@@ -44,27 +55,27 @@ void Fit::svd(Matrix& U, Matrix& s, Matrix& VT)
 			for (int i = 0; i < X_current.getRows(); i++)
 			{
 				double a_quad = 0.0;
-				b(i, 0) = 0;
+				b[i] = 0;
 				for (int j = 0; j < X_current.getCols(); j++)
 				{
-					a_quad += a(0, j) * a(0, j);
-					b(i, 0) += X_current(i, j) * a(0, j);
+					a_quad += a[j] * a[j];
+					b[i] += X_current(i, j) * a[j];
 				}
-				b(i, 0) /= a_quad;
+				b[i] /= a_quad;
 			}
 
 			for (int i = 0; i < X_current.getCols(); i++)
 			{
 				double b_quad = 0.0;
-				a(0, i) = 0.0;
+				a[i] = 0.0;
 				for (int j = 0; j < X_current.getRows(); j++)
 				{
-					b_quad += b(j, 0) * b(j, 0);
-					a(0, i) += X_current(j, i) * b(j, 0);
+					b_quad += b[j] * b[j];
+					a[i] += X_current(j, i) * b[j];
 				}
-				a(0, i) /= b_quad;
+				a[i] /= b_quad;
 			}
-			//					 X - P
+			//						   X - P
 			double er = Matrix(X_current - b * a).len();
 			F = 0.5 * er * er;
 		}
@@ -73,7 +84,7 @@ void Fit::svd(Matrix& U, Matrix& s, Matrix& VT)
 
 		//заполняем U, S, VT
 		for (int i = 0; i < U.getRows(); i++)
-			U(i, iter) = b(i, 0) / b.len();
+			U(i, iter) = b[i] / b.len();
 
 		//ridge-regular
 		if (sigma < 1e-5)
@@ -82,14 +93,16 @@ void Fit::svd(Matrix& U, Matrix& s, Matrix& VT)
 			s(iter, iter) = 1 / sigma;
 
 		for (int j = 0; j < VT.getCols(); j++)
-			VT(iter, j) = a(0, j) / a.len();
+			VT(iter, j) = a[j] / a.len();
 
 		//		X = X - P
 		X_current = X_current - b * a;
 		comp--;
 		iter++;
-		sum_P = sum_P + b * a;
 	}
-	//W = VT.transpose() * s * U.transpose() * data.Y_train;
-	//return W;
+}
+
+Fit::~Fit()
+{
+
 }
