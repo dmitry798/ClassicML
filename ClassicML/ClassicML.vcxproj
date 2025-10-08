@@ -104,6 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,14 +128,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="fit.cpp" />
-    <ClCompile Include="matrix_operations.cpp" />
+    <ClCompile Include="errors.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="optimization.cpp" />
+    <ClCompile Include="matrix.cpp" />
     <ClCompile Include="models.cpp" />
-    <ClCompile Include="matrix_operations.h" />
+    <ClCompile Include="matrix.h" />
+    <ClCompile Include="preprocessor.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="fit.h" />
+    <ClInclude Include="ClassicML.h" />
+    <ClInclude Include="errors.h" />
+    <ClInclude Include="macros.h" />
+    <ClInclude Include="optimization.h" />
     <ClInclude Include="models.h" />
+    <ClInclude Include="preprocessor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

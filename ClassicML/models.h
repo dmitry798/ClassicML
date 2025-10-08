@@ -1,68 +1,51 @@
-#pragma once
-#include "matrix_operations.h"
+п»ї#pragma once
+#include "matrix.h"
+#include "preprocessor.h"
+#include "optimization.h"
+#include "errors.h"
+using namespace Data;
 
-class LinearRegression
+class Models
 {
-private:
-	Matrix X;
-	Matrix Y;
-	Matrix W;
+protected:
 
-	Matrix X_train;
-	Matrix Y_train;
-	Matrix X_test;
-	Matrix Y_test;
-
-	Matrix X_train_norm;
-	Matrix Y_train_norm;
-	Matrix X_test_norm;
-	Matrix Y_test_norm;
-
-	Matrix mean_x;
-	Matrix std_x;
-	Matrix mean_y;
-	Matrix std_y;
-
-	Matrix U; 
-	Matrix s; 
-	Matrix VT;
+	Dataset& data;
+	Optimizer fit;
+	Errors error;
 
 public:
 
-	//конструктор линейной регрессии
-	LinearRegression(Matrix x, Matrix y);
+	Models(Dataset& shareData);
 
-	//градиентный спуск
-	//learning_rate - скорость обучения
-	//epoch - количество эпох
-	void train(double learning_rate, int epoch);
+	virtual void trn() = 0;
+	virtual Matrix predict() const = 0;
+	virtual Matrix predict(Matrix& X_predict) const = 0;
+};
 
-	//СВД-разложение...
-	Matrix SVD();
 
-	//"предсказания" модели
-	Matrix predict();
+class LinearRegression: public Models
+{
+public:
 
-	//ошибка модели
-	double loss();
+	//РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Р»РёРЅРµР№РЅРѕР№ СЂРµРіСЂРµСЃСЃРёРё
+	LinearRegression(Dataset& shareData);
 
-	//нормализация данных на обучающей и валидационной выборке
-	void normalizer();
+	//РѕР±СѓС‡РµРЅРёРµ - РЎРёРЅРіСѓР»СЏСЂРЅРѕРµ СЂР°Р·Р»РѕР¶РµРЅРёРµ
+	void trn() override;
 
-	//разделение данных из общей выборки на обучающую и валидационную
-	void split(double ratio);
+	//РѕР±СѓС‡РµРЅРёРµ - РњРµС‚РѕРґ РќРµСЃС‚РµСЂРѕРІР°
+	void train(int iters, double learning_rate, double partion_save_grade);
+
+	//С‚РµСЃС‚РёСЂРѕРІР°РЅРёРµ
+	Matrix predict() const override;
+
+	//РїСЂРѕРіРЅРѕР·
+	Matrix predict(Matrix& X_predict) const override;
+
+	//РѕС€РёР±РєР°
+	void loss();
 
 	~LinearRegression();
-private:
-
-	//высчитывает среднее значение и СКО, вызывает функцию norma
-	void transform(const Matrix& Z_train, const Matrix& Z_test, Matrix& Z_train_norm, Matrix& Z_test_norm, Matrix& mean_z, Matrix& std_z);
-
-	//нормализация данных
-	Matrix norma(const Matrix& z, const Matrix& mean_z, const Matrix& std_z);
-
-	//денормализация данных для "предсказаний"
-	Matrix denorma(const Matrix& z, const Matrix& mean_z, const Matrix& std_z);
 };
 
 

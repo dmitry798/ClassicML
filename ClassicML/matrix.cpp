@@ -1,9 +1,12 @@
-﻿#include "matrix_operations.h"
+﻿#include "matrix.h"
 #include "ctime"
 
 //реализовать исключения!!!
 
-Matrix::Matrix() : rows(0), cols(0), dim(rows * cols), name(""), matrix(nullptr) {}
+Matrix::Matrix() : rows(0), cols(0), dim(rows* cols), name(""), matrix(nullptr) 
+{ 
+	//cout << "Const def" << endl; 
+}
 
 Matrix::Matrix(const int rws,const int cls, string nme) : rows(rws), cols(cls), name(nme), dim(rows* cols), matrix(nullptr)
 {
@@ -11,6 +14,7 @@ Matrix::Matrix(const int rws,const int cls, string nme) : rows(rws), cols(cls), 
 	{
 		allocate_memory();
 		zeros();
+		//cout << "Const1 " << name << endl;
 	}
 }
 
@@ -20,6 +24,7 @@ Matrix::Matrix(double** matrix, int rws, int cls, string nme) : matrix(nullptr),
 	{
 		allocate_memory();
 		copy_data(matrix);
+		//cout << "Const2 " << name << endl;
 	}
 }
 
@@ -29,6 +34,7 @@ Matrix::Matrix(const Matrix& matrix): rows(matrix.rows), cols(matrix.cols), dim(
 	{
 		allocate_memory();
 		copy_from(matrix);
+		//cout << "Const-copy " << name << endl;
 	}
 }
 
@@ -38,22 +44,14 @@ Matrix::Matrix(Matrix&& other) noexcept : rows(other.rows), cols(other.cols), na
 	other.rows = 0;
 	other.cols = 0;
 	other.name = "";
+	//cout << "Const-move " << name << endl;
 }
 
-int Matrix::get_rows() const 
-{
-	return this->rows;
-}
+int Matrix::getRows() const { return this->rows; }
 
-int Matrix::get_cols() const
-{
-	return this->cols;
-}
+int Matrix::getCols() const { return this->cols; }
 
-int Matrix::get_dim() const
-{
-	return this->dim;
-}
+int Matrix::getDim() const { return this->dim; }
 
 double& Matrix::operator() (int i, int j) const
 {
@@ -62,32 +60,16 @@ double& Matrix::operator() (int i, int j) const
 	return matrix[i * cols + j];
 }
 
-Matrix Matrix::operator* (const Matrix& other)  const
+double& Matrix::operator[] (const int i) const
 {
-	int other_cols = other.get_cols();
-	if(cols != other.rows)
-		throw std::out_of_range("this.rows != other.cols OR this.cols != other.rows");
-
-	Matrix result(rows, other_cols, "res");
-	for (int i = 0; i < rows; i++)
-	{
-		double* res = result.matrix + i * other_cols;
-		for (int j = 0; j < cols; j++)
-		{
-			const double* oth = other.matrix + j * other_cols;
-			double a = matrix[i * cols + j];
-			for (int k = 0; k < other_cols; k++)
-			{
-				res[k] += a * oth[k];
-			}
-		}
-	}
-	return result;
+	if (i >= dim || i < 0)
+		throw std::out_of_range("Matrix index out of bounds");
+	return matrix[i];
 }
 
 Matrix Matrix::operator*(double value) const
 {
-	Matrix result(rows, cols, "res");
+	Matrix result(rows, cols, "res*v");
 
 	for (int i = 0; i < dim; i++)
 	{
@@ -98,7 +80,7 @@ Matrix Matrix::operator*(double value) const
 
 Matrix Matrix::operator+(double value) const
 {
-	Matrix result(rows, cols);
+	Matrix result(rows, cols, "res+v");
 
 	for (int i = 0; i < dim; i++)
 	{
@@ -109,7 +91,7 @@ Matrix Matrix::operator+(double value) const
 
 Matrix Matrix::operator-(double value) const
 {
-	Matrix result(rows, cols, "res");
+	Matrix result(rows, cols, "res-v");
 
 	for (int i = 0; i < dim; i++)
 	{
@@ -120,42 +102,12 @@ Matrix Matrix::operator-(double value) const
 
 Matrix Matrix::operator/(double value) const
 {
-	Matrix result(rows, cols, "res");
+	Matrix result(rows, cols, "res/v");
 
 	for (int i = 0; i < dim; i++)
 	{
 		result.matrix[i] = matrix[i] / value;
 	}
-	return result;
-}
-
-Matrix Matrix::operator+ (const Matrix& other) const
-{
-	Matrix result(rows, cols, "res");
-	if (result.get_dim() == other.dim)
-	{
-		for (int i = 0; i < dim; i++)
-		{
-			result.matrix[i] = matrix[i] + other.matrix[i];
-		}
-	}
-	else
-		throw std::out_of_range("Matrix index out of bounds");
-	return result;
-}
- 
-Matrix Matrix::operator- (const Matrix& other) const
-{
-	Matrix result(rows, cols, "res");
-	if (result.get_dim() == other.dim)
-	{
-		for (int i = 0; i < dim; i++)
-		{
-			result.matrix[i] = matrix[i] - other.matrix[i];
-		}
-	}
-	else
-		throw std::out_of_range("Matrix index out of bounds");
 	return result;
 }
 
@@ -231,6 +183,11 @@ Matrix& Matrix::std(const Matrix& x, const Matrix& mean)
 		matrix[i] = sqrt(variance / (x.rows - 1));
 	}
 	return *this;
+}
+
+void Matrix::clear()
+{
+	zeros();
 }
 
 void Matrix::random()
@@ -359,6 +316,7 @@ void Matrix::reshape() const
 Matrix::~Matrix()
 {
 	if (matrix != nullptr)
+		//cout << "deConst " << name << endl;
 		free_memory();
 }
 
@@ -389,7 +347,7 @@ Matrix::~Matrix()
 //	delete[] matrix;
 //	matrix = nullptr;
 //}
-//
+
 //int main()
 //{
 //	double a[4][3] = {
@@ -415,7 +373,7 @@ Matrix::~Matrix()
 //	};
 //
 //	double** aa = copy_static_memory(a);
-//	double** ff = copy_static_memory(f);
+//	double** bb = copy_static_memory(f);
 //
 //	/*double a[][4] = {
 //		{1.0, 50.0, 1.0, 1.0},
@@ -431,15 +389,15 @@ Matrix::~Matrix()
 //	};*/
 //
 //	Matrix A(aa, 4, 3);
-//	Matrix B(ff, 4, 3);
+//	Matrix B(bb, 4, 3);
 //	Matrix C;
-//	C = (A - B * 2).transpons();
+//	C = A - 2;
 //	A.print();
-//	B.print();
+//	/*B.print();*/
 //	C.print();
 //
 //	free_memory_(aa, 4);
-//	free_memory_(ff, 3);
+//	free_memory_(bb, 3);
 //
 //	return 0;
 //}
