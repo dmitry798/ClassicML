@@ -6,7 +6,7 @@ Models::Models(Dataset& shareData) : data(shareData), fit(data), error(shareData
 
 LinearRegression::LinearRegression(Dataset& shareData) : Models(shareData) {}
 
-void LinearRegression::train()
+void LinearRegression::trn()
 {
 	Matrix U;
 	Matrix s;
@@ -17,9 +17,16 @@ void LinearRegression::train()
 	W = VT.transpose() * s * U.transpose() * Y_train;
 }
 
+void LinearRegression::train(int iters, double learning_rate, double partion_save_grade)
+{
+	fit.nesterov(iters, learning_rate, partion_save_grade);
+}
+
 Matrix LinearRegression::predict() const
 {
-	return X_test * W;
+	StandartScaler scaler(data);
+	Y_pred = scaler.denormalize(X_test_norm * W, mean_y, std_y);
+	return Y_pred;
 }
 
 Matrix LinearRegression::predict(Matrix& X_predict) const
@@ -29,6 +36,7 @@ Matrix LinearRegression::predict(Matrix& X_predict) const
 
 void LinearRegression::loss()
 {
+
 	error.errorsRegression();
 }
 

@@ -9,6 +9,8 @@
 #define X_test data.X_test
 #define Y_test data.Y_test
 
+#define Y_pred data.Y_pred
+
 #define X_train_norm data.X_train_norm
 #define Y_train_norm data.Y_train_norm
 #define X_test_norm data.X_test_norm

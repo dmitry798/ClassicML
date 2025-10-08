@@ -3,20 +3,20 @@
 #include "preprocessor.h"
 using namespace Data;
 
-class Fit
+class Optimizer
 {
 private:
 	Dataset& data;
 
 public:
 
-	Fit(Dataset& shareData);
+	Optimizer(Dataset& shareData);
 
 	void stochastic_gradient_descent(double learning_rate, int epoch);
 
-	void nesterov();
+	void nesterov(int iters, double learning_rate, double partion_save_grade);
 
 	void svd(Matrix& U, Matrix& s, Matrix& VT);
 
-	~Fit();
+	~Optimizer();
 };

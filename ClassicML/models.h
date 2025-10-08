@@ -10,14 +10,14 @@ class Models
 protected:
 
 	Dataset& data;
-	Fit fit;
+	Optimizer fit;
 	Errors error;
 
 public:
 
 	Models(Dataset& shareData);
 
-	virtual void train() = 0;
+	virtual void trn() = 0;
 	virtual Matrix predict() const = 0;
 	virtual Matrix predict(Matrix& X_predict) const = 0;
 };
@@ -30,8 +30,11 @@ public:
 	//конструктор линейной регрессии
 	LinearRegression(Dataset& shareData);
 
-	//обучение
-	void train() override;
+	//обучение - Сингулярное разложение
+	void trn() override;
+
+	//обучение - Метод Нестерова
+	void train(int iters, double learning_rate, double partion_save_grade);
 
 	//тестирование
 	Matrix predict() const override;

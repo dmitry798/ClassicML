@@ -7,9 +7,10 @@ using std::move;
 using std::string;
 
 template<typename A>
-concept MatrxOp = requires(const A & a) 
+concept MatrxOp = requires(const A & a, int i, int j) 
 {
-	{ a[0] } -> std::same_as<double>;
+	{ a[i] } -> std::same_as<double>;
+	{ a(i, j) } -> std::same_as<double>;
 	{ a.getRows() } -> std::same_as<int>;
 	{ a.getCols() } -> std::same_as<int>;
 	{ a.getDim() } -> std::same_as<int>;
@@ -38,6 +39,8 @@ struct MatrxSumOp
 			throw std::out_of_range("a_.getRows() != b_.getRows() || a_.getCols() != b_.getCols()");
 		return a_[i] + b_[i];
 	}
+
+	double operator()(int i, int j) const { return (*this)[i * getCols() + j]; }
 };
 
 template<typename A, typename B>
@@ -63,6 +66,8 @@ struct MatrxDifOp
 			throw std::out_of_range("a_.getRows() != b_.getRows() || a_.getCols() != b_.getCols()");
 		return a_[i] - b_[i];
 	}
+
+	double operator()(int i, int j) const { return (*this)[i * getCols() + j]; }
 };
 
 template<typename A, typename B>
@@ -94,8 +99,8 @@ struct MatrxMulOp
 
 	double operator[](int idx) const
 	{
-		int i = idx / getCols();
-		int j = idx % getCols();
+		int i = idx / cols;
+		int j = idx % cols;
 		return (*this)(i, j);
 	}
 };
@@ -121,7 +126,35 @@ struct MatrxDivValOp
 	{
 		return a_[i] / b_;
 	}
+
+	double operator()(int i, int j) const { return (*this)[i * getCols() + j]; }
 };
+
+template<typename A>
+struct MatrxMulValOp
+{
+	MatrxMulValOp(const A& a, const double& b) : a_(a), b_(b), rows(a_.getRows()), cols(a_.getCols()) {}
+
+	const A& a_;
+	const double& b_;
+
+	int rows;
+	int cols;
+
+	int getRows() const { return rows; }
+
+	int getCols() const { return cols; }
+
+	int getDim() const { return rows * cols; }
+
+	double operator[](int i) const
+	{
+		return a_[i] * b_;
+	}
+
+	double operator()(int i, int j) const { return (*this)[i * getCols() + j]; }
+};
+
 
 //оператор суммы матриц
 template<typename A, typename B>
@@ -133,11 +166,16 @@ MatrxDifOp<A, B> operator- (const A& matrix, const B& other) { return { matrix, 
 
 //оператор умножения матриц
 template<typename A, typename B>
+requires (!std::is_arithmetic_v<B>)
 MatrxMulOp<A, B> operator* (const A& matrix, const B& other) { return { matrix, other }; }
 
-//оператор разности матрицы со скаляром
+//оператор деления матрицы со скаляром
 template<typename A>
 MatrxDivValOp<A> operator/ (const A& matrix, const double& other) { return { matrix, other }; }
+
+//оператор умножения матрицы со скаляром
+template<typename A>
+MatrxMulValOp<A> operator* (const A& matrix, const double& other) { return { matrix, other }; }
 
 class Matrix
 {

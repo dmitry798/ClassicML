@@ -1,20 +1,33 @@
 ﻿#include "optimization.h"
-
 #include "macros.h"
 
-Fit::Fit(Dataset& shareData): data(shareData){}
+Optimizer::Optimizer(Dataset& shareData): data(shareData){}
 
-void Fit::stochastic_gradient_descent(double learning_rate, int epoch)
+void Optimizer::stochastic_gradient_descent(double learning_rate, int epoch)
 {
 
 }
 
-void Fit::nesterov()
+void Optimizer::nesterov(int iters, double learning_rate, double partion_save_grade)
 {
+	Matrix U(W.getRows(), W.getCols(), "U");
+	Matrix gradient;
+	Matrix XT = X_train_norm.transpose();
 
+	double gamma = partion_save_grade;
+	double alpha = learning_rate;
+
+	while (iters > 0)
+	{
+		//вот тут помог исправленный концепт... отчасти
+		gradient = XT * (X_train_norm * W - Y_train_norm) * 2 - U * gamma;
+		U = U * gamma + gradient * alpha;
+		W = W - U;
+		iters--;
+	}
 }
 
-void Fit::svd(Matrix& U, Matrix& s, Matrix& VT)
+void Optimizer::svd(Matrix& U, Matrix& s, Matrix& VT)
 {
 	Matrix X_current(X_train.getRows(), X_train.getCols(), "X_centred");
 	mean_x.mean(X_train);
@@ -102,7 +115,7 @@ void Fit::svd(Matrix& U, Matrix& s, Matrix& VT)
 	}
 }
 
-Fit::~Fit()
+Optimizer::~Optimizer()
 {
 
 }

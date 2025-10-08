@@ -6,7 +6,7 @@ Errors::Errors(Dataset& data): data(data) {}
 
 double Errors::MSE() const
 {
-	Matrix er = X_test * W - Y_test;
+	Matrix er = Y_pred - Y_test;
 	er = er.transpose() * er / er.getDim();
 	return er[0];
 }
@@ -18,7 +18,7 @@ double Errors::RMSE() const
 
 double Errors::MAE() const
 {
-	Matrix er = X_test * W - Y_test;
+	Matrix er = Y_pred - Y_test;
 	double sum = 0.0;
 	for (int i = 0; i < er.getDim(); i++) 
 		sum += abs(er[i]);
@@ -27,7 +27,7 @@ double Errors::MAE() const
 
 double Errors::R2() const
 {
-    Matrix predictions = X_test * W;
+    Matrix predictions = Y_pred;
     Matrix residuals = Y_test - predictions;
 
     double sum_sq_errors = 0.0;

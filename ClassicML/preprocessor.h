@@ -15,6 +15,8 @@ namespace Data
 		Matrix X_test;
 		Matrix Y_test;
 
+		Matrix Y_pred;
+
 		Matrix X_train_norm;
 		Matrix Y_train_norm;
 		Matrix X_test_norm;
