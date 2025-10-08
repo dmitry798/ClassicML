@@ -1,4 +1,4 @@
-﻿#include "preprocessor.h"
+﻿#include "../include/ClassicML/preprocessor.h"
 using namespace Data;
 
 Dataset::Dataset(Matrix& x, Matrix& y) :
@@ -14,7 +14,7 @@ Dataset::Dataset(Matrix& x, Matrix& y) :
 	W.random();
 }
 
-#include "macros.h"
+#include "../include/ClassicML/macros.h"
 
 StandartScaler::StandartScaler(Dataset& sharedData) : data(sharedData) {}
 

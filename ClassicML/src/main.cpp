@@ -1,4 +1,4 @@
-#include "ClassicML.h"
+#include "../include/ClassicML.h"
 
 template <int R, int C>
 double** copy_static_memory(double(&matrix)[R][C])

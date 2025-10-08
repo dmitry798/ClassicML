@@ -1,4 +1,4 @@
-﻿#include "matrix.h"
+﻿#include "../include/ClassicML/matrix.h"
 #include "ctime"
 
 //реализовать исключения!!!

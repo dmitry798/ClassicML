@@ -1,5 +1,5 @@
-﻿#include "optimization.h"
-#include "macros.h"
+﻿#include "../include/ClassicML/optimization.h"
+#include "../include/ClassicML/macros.h"
 
 Optimizer::Optimizer(Dataset& shareData): data(shareData){}
 

@@ -1,6 +1,6 @@
 ﻿#include <iostream>
-#include "models.h"
-#include "macros.h"
+#include "../include/ClassicML/models.h"
+#include "../include/ClassicML/macros.h"
 
 Models::Models(Dataset& shareData) : data(shareData), fit(data), error(shareData) {}
 
