@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include "../include/ClassicML/errors.h"
 #include "../include/ClassicML/matrix.h"
@@ -7,4 +7,4 @@
 #include "../include/ClassicML/optimization.h"
 using namespace Data;
 
-//тестовый коммит
+//С‚РµСЃС‚РѕРІС‹Р№ РєРѕРјРјРёС‚
