@@ -6,20 +6,26 @@ Models::Models(Dataset& shareData) : data(shareData), fit(data), error(shareData
 
 LinearRegression::LinearRegression(Dataset& shareData) : Models(shareData) {}
 
-void LinearRegression::trn()
+void LinearRegression::train(const string& method, int iters, double lr, int mini_batch, double gamma)
 {
-	Matrix U;
-	Matrix s;
-	Matrix VT;
-
-	fit.svd(U, s, VT);
-
-	W = VT.transpose() * s * U.transpose() * Y_train;
-}
-
-void LinearRegression::train(int iters, double learning_rate, double partion_save_grade)
-{
-	fit.nesterov(iters, learning_rate, partion_save_grade);
+    if (method == "svd") 
+    {
+        Matrix U, s, VT;
+        fit.svd(U, s, VT);
+        W = VT.transpose() * s * U.transpose() * Y_train;
+    }
+    else if (method == "nesterov") 
+    {
+        fit.sgdNesterov(iters, lr, mini_batch, gamma);
+    }
+    else if (method == "sgd")
+    {
+        fit.sgd(iters, lr, mini_batch);
+    }
+    else 
+    {
+        throw std::runtime_error("Unknown training method: " + method);
+    }
 }
 
 Matrix LinearRegression::predict() const

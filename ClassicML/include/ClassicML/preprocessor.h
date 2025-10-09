@@ -56,5 +56,5 @@ public:
 	void standartNormalize();
 
 	//разделение данных из общей выборки на обучающую и валидационную
-	void split(double ratio, bool random);
+	void split(double ratio = 0.7, bool random = true);
 };

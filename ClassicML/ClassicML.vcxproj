@@ -143,6 +143,7 @@
     <ClInclude Include="include\ClassicML\models.h" />
     <ClInclude Include="include\ClassicML\optimization.h" />
     <ClInclude Include="include\ClassicML\preprocessor.h" />
+    <ClInclude Include="matrxop.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

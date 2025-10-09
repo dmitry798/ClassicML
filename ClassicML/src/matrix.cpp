@@ -12,7 +12,7 @@ Matrix::Matrix(const int rws,const int cls, string nme) : rows(rws), cols(cls), 
 {
 	if (dim > 0)
 	{
-		allocate_memory();
+		allocateMemory();
 		zeros();
 		//cout << "Const1 " << name << endl;
 	}
@@ -22,8 +22,8 @@ Matrix::Matrix(double** matrix, int rws, int cls, string nme) : matrix(nullptr),
 {
 	if (dim > 0)
 	{
-		allocate_memory();
-		copy_data(matrix);
+		allocateMemory();
+		copyData(matrix);
 		//cout << "Const2 " << name << endl;
 	}
 }
@@ -32,8 +32,8 @@ Matrix::Matrix(const Matrix& matrix): rows(matrix.rows), cols(matrix.cols), dim(
 {
 	if (dim > 0)
 	{
-		allocate_memory();
-		copy_from(matrix);
+		allocateMemory();
+		copyFrom(matrix);
 		//cout << "Const-copy " << name << endl;
 	}
 }
@@ -114,7 +114,7 @@ Matrix Matrix::operator/(double value) const
 Matrix& Matrix::operator= (Matrix&& other) noexcept
 {
 	if (this != &other) {
-		free_memory();
+		freeMemory();
 		rows = other.rows;
 		cols = other.cols;
 		dim = other.dim;
@@ -138,11 +138,11 @@ Matrix& Matrix::operator= (const Matrix& other) noexcept
 		{
 			if (matrix == nullptr || other.dim > dim)
 			{
-				free_memory();
+				freeMemory();
 				rows = other.rows;
 				cols = other.cols;
 				dim = other.dim;
-				allocate_memory();
+				allocateMemory();
 			}
 			else
 			{
@@ -151,7 +151,7 @@ Matrix& Matrix::operator= (const Matrix& other) noexcept
 				dim = other.dim;
 			}
 		}
-		copy_from(other);
+		copyFrom(other);
 	}
 	return *this;
 }
@@ -198,7 +198,7 @@ void Matrix::random()
 	}
 }
 
-void Matrix::random_shuffle(Matrix& other)
+void Matrix::randomShuffle(Matrix& other)
 {
 	for (int i = rows - 1; i > 0; i--) 
 	{
@@ -250,7 +250,27 @@ double Matrix::len()
 
 }
 
-void Matrix::allocate_memory()
+Matrix Matrix::sliceRow(int start, int end)
+{
+	if (start >= rows || end >= rows || start < 0 || end < 0 || end < start)
+		std::out_of_range("start >= dim || end >= dim || start < 0 || end < 0 || end < start");
+
+	int new_rows = end - start;
+	Matrix result(new_rows, cols, "res_slice");
+
+	for (int i = 0; i < new_rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			// Правильная индексация: i + start для исходной матрицы
+			result.matrix[i * cols + j] = matrix[(i + start) * cols + j];
+		}
+	}
+
+	return result;
+}
+
+void Matrix::allocateMemory()
 {
 	if (matrix == nullptr && dim > 0)
 	{
@@ -258,7 +278,7 @@ void Matrix::allocate_memory()
 	}
 }
 
-void Matrix::free_memory()
+void Matrix::freeMemory()
 {
 	if (matrix != nullptr)
 	{
@@ -271,7 +291,7 @@ void Matrix::free_memory()
 	name = "";
 }
 
-void Matrix::copy_from(const Matrix& other)
+void Matrix::copyFrom(const Matrix& other)
 {
 	if (dim > 0)
 	{
@@ -282,7 +302,7 @@ void Matrix::copy_from(const Matrix& other)
 	}
 }
 
-void Matrix::copy_data(double** matrix)
+void Matrix::copyData(double** matrix)
 {
 	if (dim > 0)
 	{
@@ -317,87 +337,5 @@ Matrix::~Matrix()
 {
 	if (matrix != nullptr)
 		//cout << "deConst " << name << endl;
-		free_memory();
+		freeMemory();
 }
-
-//template <int R, int C>
-//double** copy_static_memory(double(&matrix)[R][C])
-//{
-//	double** dest = new double* [R];
-//	for (int i = 0; i < R; i++)
-//	{
-//		dest[i] = new double[C];
-//	}
-//	for (int i = 0; i < R; i++)
-//	{
-//		for (int j = 0; j < C; j++)
-//		{
-//			dest[i][j] = matrix[i][j];
-//		}
-//	}
-//	return dest;
-//}
-//
-//static void free_memory_(double** matrix, int rows)
-//{
-//	for (int i = 0; i < rows; i++)
-//	{
-//		delete[] matrix[i];
-//	}
-//	delete[] matrix;
-//	matrix = nullptr;
-//}
-
-//int main()
-//{
-//	double a[4][3] = {
-//		{1, 2, 3},
-//		{4, 5, 6},
-//		{7, 8, 9},
-//		{10, 11, 12}
-//	};
-//
-//	double c[1][1] = { {1} };
-//
-//	double f[4][3] = {
-//		{1, 2, 3},
-//		{4, 5, 6},
-//		{7, 8, 9},
-//		{10, 11, 12}
-//	};
-//
-//	double b[3][4] = {
-//	{1, 2, 3, 4},
-//	{5, 6, 7, 8},
-//	{9, 10, 11, 12}
-//	};
-//
-//	double** aa = copy_static_memory(a);
-//	double** bb = copy_static_memory(f);
-//
-//	/*double a[][4] = {
-//		{1.0, 50.0, 1.0, 1.0},
-//		{1.0, 75.0, 2.0, 1.0},
-//		{1.0, 100.0, 3.0, 2.0},
-//		{1.0, 120.0, 3.0, 3.0},
-//		{1.0, 150.0, 4.0, 2.0},
-//		{1.0, 80.0, 2.0, 5.0},
-//		{1.0, 95.0, 3.0, 1.0},
-//		{1.0, 110.0, 3.0, 4.0},
-//		{1.0, 130.0, 4.0, 3.0},
-//		{1.0, 160.0, 5.0, 2.0}
-//	};*/
-//
-//	Matrix A(aa, 4, 3);
-//	Matrix B(bb, 4, 3);
-//	Matrix C;
-//	C = A - 2;
-//	A.print();
-//	/*B.print();*/
-//	C.print();
-//
-//	free_memory_(aa, 4);
-//	free_memory_(bb, 3);
-//
-//	return 0;
-//}

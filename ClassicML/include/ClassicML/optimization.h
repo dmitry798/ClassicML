@@ -12,9 +12,9 @@ public:
 
 	Optimizer(Dataset& shareData);
 
-	void stochastic_gradient_descent(double learning_rate, int epoch);
+	void sgd(int iters = 1000, double learning_rate = 0.01, int mini_batch = 8);
 
-	void nesterov(int iters, double learning_rate, double partion_save_grade);
+	void sgdNesterov(int iters = 1000, double learning_rate = 0.01, int mini_batch = 8, double partion_save_grade = 0.01);
 
 	void svd(Matrix& U, Matrix& s, Matrix& VT);
 

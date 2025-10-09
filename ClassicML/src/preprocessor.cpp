@@ -21,7 +21,7 @@ StandartScaler::StandartScaler(Dataset& sharedData) : data(sharedData) {}
 void StandartScaler::split(double ratio, bool random)
 {
 	if (random)
-		X.random_shuffle(Y);
+		X.randomShuffle(Y);
 	int rows_train = (int)(X.getRows() * ratio);
 	int rows_test = X.getRows() - rows_train;
 

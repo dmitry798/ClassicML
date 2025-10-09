@@ -68,12 +68,12 @@ int main()
 	// Предобработка
 	Dataset data(X, Y);
 	StandartScaler scaler(data);
-	scaler.split(0.7, true);
+	scaler.split();
     scaler.standartNormalize();
 
 	// Создаем и обучаем модель
 	LinearRegression model(data);
-	model.train(10, 0.01, 0.01);
+	model.train("svd");
 	data.Y_test.print();
 	model.predict().print();
 	model.loss();
