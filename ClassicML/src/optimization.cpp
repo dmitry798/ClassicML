@@ -20,7 +20,7 @@ void Optimizer::nesterov(int iters, double learning_rate, double partion_save_gr
 	while (iters > 0)
 	{
 		//вот тут помог исправленный концепт... отчасти
-		gradient = XT * (X_train_norm * W - Y_train_norm) * 2 - U * gamma;
+		gradient = XT * (X_train_norm * (W - U * gamma) - Y_train_norm) * 2;
 		U = U * gamma + gradient * alpha;
 		W = W - U;
 		iters--;

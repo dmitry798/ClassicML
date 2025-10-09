@@ -6,5 +6,3 @@
 #include "../include/ClassicML/preprocessor.h"
 #include "../include/ClassicML/optimization.h"
 using namespace Data;
-
-//тестовый коммит
