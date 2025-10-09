@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <cmath>
-#include "../matrxop.h"
+#include "matrxop.h"
 
 class Matrix
 {
