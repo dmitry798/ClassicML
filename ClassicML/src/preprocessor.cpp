@@ -1,4 +1,4 @@
-﻿#include "preprocessor.h"
+﻿#include "../include/ClassicML/preprocessor.h"
 using namespace Data;
 
 Dataset::Dataset(Matrix& x, Matrix& y) :
@@ -14,14 +14,14 @@ Dataset::Dataset(Matrix& x, Matrix& y) :
 	W.random();
 }
 
-#include "macros.h"
+#include "../include/ClassicML/macros.h"
 
 StandartScaler::StandartScaler(Dataset& sharedData) : data(sharedData) {}
 
 void StandartScaler::split(double ratio, bool random)
 {
 	if (random)
-		X.random_shuffle(Y);
+		X.randomShuffle(Y);
 	int rows_train = (int)(X.getRows() * ratio);
 	int rows_test = X.getRows() - rows_train;
 

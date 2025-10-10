@@ -1,6 +1,6 @@
-#include "errors.h"
+﻿#include "../include/ClassicML/errors.h"
 #include <cmath>
-#include "macros.h"
+#include "../include/ClassicML/macros.h"
 
 Errors::Errors(Dataset& data): data(data) {}
 
@@ -27,8 +27,7 @@ double Errors::MAE() const
 
 double Errors::R2() const
 {
-    Matrix predictions = Y_pred;
-    Matrix residuals = Y_test - predictions;
+    Matrix residuals = Y_test - Y_pred;
 
     double sum_sq_errors = 0.0;
     for (int i = 0; i < residuals.getDim(); i++)

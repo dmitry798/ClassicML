@@ -128,21 +128,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="errors.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="optimization.cpp" />
-    <ClCompile Include="matrix.cpp" />
-    <ClCompile Include="models.cpp" />
-    <ClCompile Include="matrix.h" />
-    <ClCompile Include="preprocessor.cpp" />
+    <ClCompile Include="src\errors.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\matrix.cpp" />
+    <ClCompile Include="src\models.cpp" />
+    <ClCompile Include="src\optimization.cpp" />
+    <ClCompile Include="src\preprocessor.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ClassicML.h" />
-    <ClInclude Include="errors.h" />
-    <ClInclude Include="macros.h" />
-    <ClInclude Include="optimization.h" />
-    <ClInclude Include="models.h" />
-    <ClInclude Include="preprocessor.h" />
+    <ClInclude Include="include\ClassicML.h" />
+    <ClInclude Include="include\ClassicML\errors.h" />
+    <ClInclude Include="include\ClassicML\macros.h" />
+    <ClInclude Include="include\ClassicML\matrix.h" />
+    <ClInclude Include="include\ClassicML\matrxop.h" />
+    <ClInclude Include="include\ClassicML\models.h" />
+    <ClInclude Include="include\ClassicML\optimization.h" />
+    <ClInclude Include="include\ClassicML\preprocessor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

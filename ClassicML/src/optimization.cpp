@@ -1,18 +1,34 @@
-﻿#include "optimization.h"
-#include "macros.h"
+﻿#include "../include/ClassicML/optimization.h"
+#include "../include/ClassicML/macros.h"
 
 Optimizer::Optimizer(Dataset& shareData): data(shareData){}
 
-void Optimizer::stochastic_gradient_descent(double learning_rate, int epoch)
+void Optimizer::sgd(int iters, double learning_rate, int mini_batch)
 {
+	double alpha = learning_rate;
 
+	Matrix gradient;
+
+	while (iters > 0)
+	{
+		for (int start = 0; start < X_train_norm.getRows(); start += mini_batch)
+		{
+			int end = std::min(start + mini_batch, X_train_norm.getRows());
+
+			Matrix X_batch = X_train_norm.sliceRow(start, end);
+			Matrix Y_batch = Y_train_norm.sliceRow(start, end);
+
+			gradient = X_batch.transpose() * (X_batch * W - Y_batch) * 2 / (end - start);
+			W = W - gradient * alpha;
+		}
+		iters--;
+	}
 }
 
-void Optimizer::nesterov(int iters, double learning_rate, double partion_save_grade)
+void Optimizer::sgdNesterov(int iters, double learning_rate, int mini_batch, double partion_save_grade)
 {
 	Matrix U(W.getRows(), W.getCols(), "U");
 	Matrix gradient;
-	Matrix XT = X_train_norm.transpose();
 
 	double gamma = partion_save_grade;
 	double alpha = learning_rate;
@@ -20,9 +36,17 @@ void Optimizer::nesterov(int iters, double learning_rate, double partion_save_gr
 	while (iters > 0)
 	{
 		//вот тут помог исправленный концепт... отчасти
-		gradient = XT * (X_train_norm * W - Y_train_norm) * 2 - U * gamma;
-		U = U * gamma + gradient * alpha;
-		W = W - U;
+		for (int start = 0; start < X_train_norm.getRows(); start += mini_batch)
+		{
+			int end = std::min(start + mini_batch, X_train_norm.getRows());
+
+			Matrix X_batch = X_train_norm.sliceRow(start, end);
+			Matrix Y_batch = Y_train_norm.sliceRow(start, end);
+
+			gradient = X_batch.transpose() * (X_batch * (W - U * gamma) - Y_batch) * 2 / (end - start);
+			U = U * gamma + gradient * alpha;
+			W = W - U;
+		}
 		iters--;
 	}
 }

@@ -1,4 +1,4 @@
-#include "ClassicML.h"
+п»ї#include "../include/ClassicML.h"
 
 template <int R, int C>
 double** copy_static_memory(double(&matrix)[R][C])
@@ -65,15 +65,15 @@ int main()
 	Matrix X(x, train_rows_x, train_cols_x, "X");
 	Matrix Y(y, train_rows_y, train_cols_y, "Y");
 
-	// Предобработка
+	// РџСЂРµРґРѕР±СЂР°Р±РѕС‚РєР°
 	Dataset data(X, Y);
 	StandartScaler scaler(data);
-	scaler.split(0.7, true);
+	scaler.split();
     scaler.standartNormalize();
 
-	// Создаем и обучаем модель
+	// РЎРѕР·РґР°РµРј Рё РѕР±СѓС‡Р°РµРј РјРѕРґРµР»СЊ
 	LinearRegression model(data);
-	model.train(1000, 0.01, 0.001);
+	model.train("nesterov");
 	data.Y_test.print();
 	model.predict().print();
 	model.loss();

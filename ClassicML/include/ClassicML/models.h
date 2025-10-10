@@ -17,7 +17,7 @@ public:
 
 	Models(Dataset& shareData);
 
-	virtual void trn() = 0;
+	virtual void  train(const string& method, int iters, double lr, int mini_batch, double gamma) = 0;
 	virtual Matrix predict() const = 0;
 	virtual Matrix predict(Matrix& X_predict) const = 0;
 };
@@ -30,11 +30,8 @@ public:
 	//конструктор линейной регрессии
 	LinearRegression(Dataset& shareData);
 
-	//обучение - Сингулярное разложение
-	void trn() override;
-
 	//обучение - Метод Нестерова
-	void train(int iters, double learning_rate, double partion_save_grade);
+	void train(const string& method, int iters = 1000, double lr = 0.01, int mini_batch = 8, double gamma = 0.01) override;
 
 	//тестирование
 	Matrix predict() const override;
