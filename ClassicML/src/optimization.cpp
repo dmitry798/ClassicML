@@ -3,7 +3,16 @@
 
 Optimizer::Optimizer(Dataset& shareData): data(shareData){}
 
-void Optimizer::sgd(int iters, double learning_rate, int mini_batch)
+Matrix sigmoid(Matrix&& XW)
+{
+	for (int i = 0; i < XW.getDim(); i++)
+	{
+		XW[i] = 1 / (1 + exp(-XW[i]));
+	}
+	return XW;
+}
+
+void Optimizer::sgd(int iters, double learning_rate, int mini_batch, bool logistic)
 {
 	double alpha = learning_rate;
 
@@ -18,14 +27,17 @@ void Optimizer::sgd(int iters, double learning_rate, int mini_batch)
 			Matrix X_batch = X_train_norm.sliceRow(start, end);
 			Matrix Y_batch = Y_train_norm.sliceRow(start, end);
 
-			gradient = X_batch.transpose() * (X_batch * W - Y_batch) * 2 / (end - start);
+			if (!logistic)
+				gradient = X_batch.transpose() * (X_batch * W - Y_batch) * 2.0 / (end - start);
+			else
+				gradient = X_batch.transpose() * (sigmoid(X_batch * W) - Y_batch) / (end - start);
 			W = W - gradient * alpha;
 		}
 		iters--;
 	}
 }
 
-void Optimizer::sgdNesterov(int iters, double learning_rate, int mini_batch, double partion_save_grade)
+void Optimizer::sgdNesterov(int iters, double learning_rate, int mini_batch, double partion_save_grade, bool logistic)
 {
 	Matrix U(W.getRows(), W.getCols(), "U");
 	Matrix gradient;
@@ -43,7 +55,10 @@ void Optimizer::sgdNesterov(int iters, double learning_rate, int mini_batch, dou
 			Matrix X_batch = X_train_norm.sliceRow(start, end);
 			Matrix Y_batch = Y_train_norm.sliceRow(start, end);
 
-			gradient = X_batch.transpose() * (X_batch * (W - U * gamma) - Y_batch) * 2 / (end - start);
+			if (!logistic)
+				gradient = X_batch.transpose() * (X_batch * (W - U * gamma) - Y_batch) * 2.0 / (end - start);
+			else
+				gradient = X_batch.transpose() * (sigmoid(X_batch * (W - U * gamma)) - Y_batch)/ (end - start);
 			U = U * gamma + gradient * alpha;
 			W = W - U;
 		}
@@ -127,7 +142,7 @@ void Optimizer::svd(Matrix& U, Matrix& s, Matrix& VT)
 		if (sigma < 1e-5)
 			s(iter, iter) = sigma / (sigma * sigma + 10e-5);
 		else
-			s(iter, iter) = 1 / sigma;
+			s(iter, iter) = 1.0 / sigma;
 
 		for (int j = 0; j < VT.getCols(); j++)
 			VT(iter, j) = a[j] / a.len();

@@ -115,6 +115,8 @@ public:
 	//выделение подмножества матрицы
 	Matrix sliceRow(int start, int end);
 
+	Matrix log();
+
 	//деструктор
 	~Matrix();
 

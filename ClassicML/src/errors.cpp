@@ -57,3 +57,10 @@ void Errors::errorsRegression() const
         "R2: " << R2()
         << endl;
 }
+
+double Errors::logLoss() const
+{
+    //          logloss = -1/n * sun(y_i * log(p_i) + (1-y_i)*log(1-p_i)) -> min
+
+    return ((Y_train_norm & Matrix(X_train_norm * W).log() + (Y_train_norm * (-1.0) + 1.0) & Matrix(X_train_norm * W * (-1.0) + 1.0).log()) * (-1.0/ X_train.getDim()))[0];
+}

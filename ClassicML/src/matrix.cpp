@@ -194,7 +194,7 @@ void Matrix::random()
 {
 	for (int i = 0; i < dim; i++)
 	{
-		matrix[i] = (rand() % 100) / static_cast<double>(100);
+		matrix[i] = (rand() % 1000 - 500) / 10000.0;;
 	}
 }
 
@@ -262,12 +262,18 @@ Matrix Matrix::sliceRow(int start, int end)
 	{
 		for (int j = 0; j < cols; j++)
 		{
-			// Правильная индексация: i + start для исходной матрицы
 			result.matrix[i * cols + j] = matrix[(i + start) * cols + j];
 		}
 	}
 
 	return result;
+}
+
+Matrix Matrix::log()
+{
+	for (int i = 0; i < dim; i++)
+		matrix[i] = log2(matrix[i]);
+	return *this;
 }
 
 void Matrix::allocateMemory()

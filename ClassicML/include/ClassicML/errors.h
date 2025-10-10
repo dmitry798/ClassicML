@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "matrix.h"
 #include "preprocessor.h"
 using namespace Data;
@@ -21,14 +21,16 @@ public:
 
 	void errorsRegression() const;
 
-	double Accuracy();
+	double logLoss() const;
 
-	double Precision();
+	double accuracy();
 
-	double Recall();
+	double precision();
 
-	double F1Score();
+	double recall();
 
-	double RocAuc();
+	double f1Score();
+
+	double rocAuc();
 };
 
