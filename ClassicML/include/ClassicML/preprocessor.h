@@ -3,6 +3,7 @@
 
 namespace Data
 {
+	//сумка данных
 	struct Dataset
 	{
 	public:

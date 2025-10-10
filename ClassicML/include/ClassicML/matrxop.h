@@ -6,6 +6,7 @@ using std::endl;
 using std::move;
 using std::string;
 
+//концепт шаблонов для матричных выражений
 template<typename A>
 concept MatrxOp = requires(const A & a, int i, int j)
 {
@@ -16,6 +17,7 @@ concept MatrxOp = requires(const A & a, int i, int j)
 	{ a.getDim() } -> std::same_as<int>;
 };
 
+//структура для суммы матриц
 template<typename A, typename B>
 struct MatrxSumOp
 {
@@ -27,12 +29,16 @@ struct MatrxSumOp
 	int rows;
 	int cols;
 
+	//получение кол-ва строк
 	int getRows() const { return rows; }
 
+	//получение кол-ва колонок
 	int getCols() const { return cols; }
 
+	//получение размерности матрицы
 	int getDim() const { return rows * cols; }
 
+	//операция суммы матриц
 	double operator[](int i) const
 	{
 		if (a_.getRows() != b_.getRows() || a_.getCols() != b_.getCols())
@@ -40,6 +46,7 @@ struct MatrxSumOp
 		return a_[i] + b_[i];
 	}
 
+	//костыль для шаблонов
 	double operator()(int i, int j) const { return (*this)[i * getCols() + j]; }
 };
 
@@ -60,6 +67,7 @@ struct MatrxDifOp
 
 	int getDim() const { return rows * cols; }
 
+	//операци разности матриц
 	double operator[](int i) const
 	{
 		if (a_.getRows() != b_.getRows() || a_.getCols() != b_.getCols())
@@ -87,6 +95,7 @@ struct MatrxMulOp
 
 	int getDim() const { return rows * cols; }
 
+	//операция умнодения матриц
 	double operator()(int i, int j) const
 	{
 		if (a_.getCols() != b_.getRows())
@@ -97,6 +106,7 @@ struct MatrxMulOp
 		return sum;
 	}
 
+	//костыль для обращения к элементам
 	double operator[](int idx) const
 	{
 		int i = idx / cols;
@@ -122,6 +132,7 @@ struct MatrxDivValOp
 
 	int getDim() const { return rows * cols; }
 
+	//операция деления матрицы на скаляр
 	double operator[](int i) const
 	{
 		return a_[i] / b_;
@@ -147,6 +158,7 @@ struct MatrxMulValOp
 
 	int getDim() const { return rows * cols; }
 
+	//операция умножения матрицы на скаляр
 	double operator[](int i) const
 	{
 		return a_[i] * b_;
