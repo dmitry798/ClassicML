@@ -67,17 +67,17 @@ public:
 	////оператор умножения матриц
 	//Matrix operator* (const Matrix& other) const;
 
-	//оператор суммы со скаляром
-	Matrix operator+ (double value) const;
+	////оператор суммы со скаляром
+	//Matrix operator+ (double value) const;
 
-	//оператор вычитания скаляра
-	Matrix operator- (double value) const;
+	////оператор вычитания скаляра
+	//Matrix operator- (double value) const;
 
-	//оператор умножения на скаляр
-	Matrix operator* (double value) const;
+	////оператор умножения на скаляр
+	//Matrix operator* (double value) const;
 
-	//оператор деления на скаляр
-	Matrix operator/ (double value) const;
+	////оператор деления на скаляр
+	//Matrix operator/ (double value) const;
 
 	//оператор присваивания
 	Matrix& operator= (const Matrix& other) noexcept;
@@ -98,7 +98,7 @@ public:
 	void reshape() const;
 
 	//вывод матрицы
-	void print() const;
+	void print(string text = "") const;
 
 	//мат ожидание
 	Matrix& mean(const Matrix& x);
@@ -115,7 +115,9 @@ public:
 	//выделение подмножества матрицы
 	Matrix sliceRow(int start, int end);
 
-	Matrix log();
+	Matrix logMatrx();
+
+	double sum();
 
 	//деструктор
 	~Matrix();

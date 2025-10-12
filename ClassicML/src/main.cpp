@@ -77,7 +77,7 @@ int main()
 
 	// Создаем и обучаем модель
 	LogisticRegression model(data);
-	model.train("sgd", 100, 0.1, 8);
+	model.train("sgd", 0, 0.1, 8);
 	data.Y_test.print();
 	model.predict().print();
 	model.loss();

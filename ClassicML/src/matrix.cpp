@@ -67,49 +67,49 @@ double& Matrix::operator[] (const int i) const
 	return matrix[i];
 }
 
-Matrix Matrix::operator*(double value) const
-{
-	Matrix result(rows, cols, "res*v");
-
-	for (int i = 0; i < dim; i++)
-	{
-		result.matrix[i] = matrix[i] * value;
-	}
-	return result;
-}
-
-Matrix Matrix::operator+(double value) const
-{
-	Matrix result(rows, cols, "res+v");
-
-	for (int i = 0; i < dim; i++)
-	{
-		result.matrix[i] = matrix[i] + value;
-	}
-	return result;
-}
-
-Matrix Matrix::operator-(double value) const
-{
-	Matrix result(rows, cols, "res-v");
-
-	for (int i = 0; i < dim; i++)
-	{
-		result.matrix[i] = matrix[i] - value;
-	}
-	return result;
-}
-
-Matrix Matrix::operator/(double value) const
-{
-	Matrix result(rows, cols, "res/v");
-
-	for (int i = 0; i < dim; i++)
-	{
-		result.matrix[i] = matrix[i] / value;
-	}
-	return result;
-}
+//Matrix Matrix::operator*(double value) const
+//{
+//	Matrix result(rows, cols, "res*v");
+//
+//	for (int i = 0; i < dim; i++)
+//	{
+//		result.matrix[i] = matrix[i] * value;
+//	}
+//	return result;
+//}
+//
+//Matrix Matrix::operator+(double value) const
+//{
+//	Matrix result(rows, cols, "res+v");
+//
+//	for (int i = 0; i < dim; i++)
+//	{
+//		result.matrix[i] = matrix[i] + value;
+//	}
+//	return result;
+//}
+//
+//Matrix Matrix::operator-(double value) const
+//{
+//	Matrix result(rows, cols, "res-v");
+//
+//	for (int i = 0; i < dim; i++)
+//	{
+//		result.matrix[i] = matrix[i] - value;
+//	}
+//	return result;
+//}
+//
+//Matrix Matrix::operator/(double value) const
+//{
+//	Matrix result(rows, cols, "res/v");
+//
+//	for (int i = 0; i < dim; i++)
+//	{
+//		result.matrix[i] = matrix[i] / value;
+//	}
+//	return result;
+//}
 
 Matrix& Matrix::operator= (Matrix&& other) noexcept
 {
@@ -269,11 +269,19 @@ Matrix Matrix::sliceRow(int start, int end)
 	return result;
 }
 
-Matrix Matrix::log()
+Matrix Matrix::logMatrx()
 {
 	for (int i = 0; i < dim; i++)
-		matrix[i] = log2(matrix[i]);
+		matrix[i] = log(matrix[i]);
 	return *this;
+}
+
+double Matrix::sum()
+{
+	double sum_el = 0.0;
+	for (int i = 0; i < dim; i++)
+		sum_el += matrix[i];
+	return sum_el;
 }
 
 void Matrix::allocateMemory()
@@ -322,8 +330,9 @@ void Matrix::copyData(double** matrix)
 	}
 }
 
-void Matrix::print() const
+void Matrix::print(string text) const
 {
+	cout << text << endl;
 	for (int i = 0; i < dim; i++)
 	{
 		cout << matrix[i] << " ";

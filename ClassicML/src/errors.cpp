@@ -60,7 +60,26 @@ void Errors::errorsRegression() const
 
 double Errors::logLoss() const
 {
-    //          logloss = -1/n * sun(y_i * log(p_i) + (1-y_i)*log(1-p_i)) -> min
+    //          logloss = -1/n * sum(y_i * log(p_i) + (1-y_i)*log(1-p_i)) -> min
+    double eps = 1e-5;
+    Matrix P = sigmoid(X_train * W);
+    P.print("P = "); // Посмотреть вероятности
 
-    return ((Y_train_norm & Matrix(X_train_norm * W).log() + (Y_train_norm * (-1.0) + 1.0) & Matrix(X_train_norm * W * (-1.0) + 1.0).log()) * (-1.0/ X_train.getDim()))[0];
+    Matrix logP = Matrix(P + eps).logMatrx();
+    logP.print("log(P+eps) = ");
+
+    Matrix logOneMinusP = Matrix(1.0 - P + eps).logMatrx();
+    logOneMinusP.print("log(1-P+eps) = ");
+
+    Matrix term1 = Y_train & logP;
+    Matrix term2 = (1.0 - Y_train) & logOneMinusP;
+    term1.print("Y * logP = ");
+    term2.print("(1-Y) * log(1-P) = ");
+
+    Matrix sumMat = term1 + term2;
+    sumMat.print("sumMat = ");
+
+    double logloss = -1.0 / Y_train.getDim() * sumMat.sum();
+    cout << "logloss = " << logloss << endl;
+    return logloss;
 }

@@ -25,7 +25,7 @@ void Optimizer::sgd(int iters, double learning_rate, int mini_batch, bool logist
 			int end = std::min(start + mini_batch, X_train_norm.getRows());
 
 			Matrix X_batch = X_train_norm.sliceRow(start, end);
-			Matrix Y_batch = Y_train_norm.sliceRow(start, end);
+			Matrix Y_batch = Y_train.sliceRow(start, end);
 
 			if (!logistic)
 				gradient = X_batch.transpose() * (X_batch * W - Y_batch) * 2.0 / (end - start);
@@ -53,7 +53,7 @@ void Optimizer::sgdNesterov(int iters, double learning_rate, int mini_batch, dou
 			int end = std::min(start + mini_batch, X_train_norm.getRows());
 
 			Matrix X_batch = X_train_norm.sliceRow(start, end);
-			Matrix Y_batch = Y_train_norm.sliceRow(start, end);
+			Matrix Y_batch = Y_train.sliceRow(start, end);
 
 			if (!logistic)
 				gradient = X_batch.transpose() * (X_batch * (W - U * gamma) - Y_batch) * 2.0 / (end - start);

@@ -73,9 +73,7 @@ void LogisticRegression::train(const string& method, int iters, double lr, int m
 
 Matrix LogisticRegression::predict() const
 {
-    StandartScaler scaler(data);
-    Y_pred = scaler.denormalize(sigmoid(X_test_norm * W), mean_y, std_y);
-    return Y_pred;
+    return sigmoid(X_test_norm * W);
 }
 
 Matrix LogisticRegression::predict(Matrix& X_predict) const
