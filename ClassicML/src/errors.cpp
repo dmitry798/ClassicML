@@ -61,25 +61,36 @@ void Errors::errorsRegression() const
 double Errors::logLoss() const
 {
     //          logloss = -1/n * sum(y_i * log(p_i) + (1-y_i)*log(1-p_i)) -> min
-    double eps = 1e-5;
-    Matrix P = sigmoid(X_train * W);
-    P.print("P = "); // Посмотреть вероятности
+    double eps = 1e-15;
+    double logloss = (-1.0 / Y_train.getDim()) * (Matrix((Y_train & Matrix(sigmoid(X_train_norm * W) + eps).logMatrx()) +
+        ((1.0 - Y_train) & Matrix(1.0 - sigmoid(X_train_norm * W) + eps).logMatrx()))).sum();
 
-    Matrix logP = Matrix(P + eps).logMatrx();
-    logP.print("log(P+eps) = ");
-
-    Matrix logOneMinusP = Matrix(1.0 - P + eps).logMatrx();
-    logOneMinusP.print("log(1-P+eps) = ");
-
-    Matrix term1 = Y_train & logP;
-    Matrix term2 = (1.0 - Y_train) & logOneMinusP;
-    term1.print("Y * logP = ");
-    term2.print("(1-Y) * log(1-P) = ");
-
-    Matrix sumMat = term1 + term2;
-    sumMat.print("sumMat = ");
-
-    double logloss = -1.0 / Y_train.getDim() * sumMat.sum();
-    cout << "logloss = " << logloss << endl;
     return logloss;
 }
+
+double Errors::logLossM() const
+{
+    double eps = 1e-15;
+    double logloss = 0.0;
+    int n_samples = Y_train.getRows();
+    int n_classes = Y_train.getCols();
+
+    Matrix prob = softMax(X_train_norm * W);
+
+    for (int i = 0; i < n_samples; ++i)
+    {
+        for (int k = 0; k < n_classes; ++k)
+        {
+            if (Y_train(i, k) == 1.0)
+            {
+                double p = prob(i, k);
+                logloss += std::log(p + eps);
+                break;
+            }
+        }
+    }
+
+    // 4. Возвращаем среднее значение с обратным знаком
+    return -logloss / n_samples;
+}
+

@@ -12,7 +12,30 @@ Matrix sigmoid(Matrix&& XW)
 	return XW;
 }
 
-void Optimizer::sgd(int iters, double learning_rate, int mini_batch, bool logistic)
+Matrix softMax(Matrix&& XW)
+{
+	double sum = 0.0;
+
+	for (int i = 0; i < XW.getDim(); i++)
+		sum += exp(XW[i]);
+
+	for (int i = 0; i < XW.getDim(); i++)
+		XW[i] = exp(XW[i]) / sum;
+
+	return XW;
+}
+
+/*
+
+Расшифровки номеров методов:
+
+	- LinearRegression: 1
+	- LogisticRegression: 2
+	- MultiClassLogisticRegression: 3
+
+*/
+
+void Optimizer::gradientDescent(int iters, double learning_rate, int method)
 {
 	double alpha = learning_rate;
 
@@ -20,24 +43,70 @@ void Optimizer::sgd(int iters, double learning_rate, int mini_batch, bool logist
 
 	while (iters > 0)
 	{
+		switch (method)
+		{
+			case 0:
+				std::exception("Choice any method");
+			case 1:
+				gradient = X_train_norm.transpose() * (X_train_norm * W - Y_train_norm);
+				break;
+			case 2:
+				gradient = X_train_norm.transpose() * (sigmoid(X_train_norm * W) - Y_train) * 2.0;
+				break;
+			case 3:
+				gradient = X_train_norm.transpose() * (softMax(X_train_norm * W) - Y_train) * 2.0;
+				break;
+		}
+		W = W - gradient * alpha;
+		iters--;
+	}
+}
+
+void Optimizer::sgd(int iters, double learning_rate, int mini_batch, int method)
+{
+	double alpha = learning_rate;
+
+	Matrix gradient;
+	while (iters > 0)
+	{
 		for (int start = 0; start < X_train_norm.getRows(); start += mini_batch)
 		{
 			int end = std::min(start + mini_batch, X_train_norm.getRows());
 
 			Matrix X_batch = X_train_norm.sliceRow(start, end);
-			Matrix Y_batch = Y_train.sliceRow(start, end);
+			Matrix Y_batch; Matrix Wp;
 
-			if (!logistic)
-				gradient = X_batch.transpose() * (X_batch * W - Y_batch) * 2.0 / (end - start);
-			else
-				gradient = X_batch.transpose() * (sigmoid(X_batch * W) - Y_batch) / (end - start);
-			W = W - gradient * alpha;
+			switch (method)
+			{
+				case 1:
+					Y_batch = Y_train_norm.sliceRow(start, end);
+					gradient = X_batch.transpose() * (X_batch * W - Y_batch) * 2.0 / (end - start);
+					W = W - gradient * alpha;
+					break;
+				case 2:
+					Y_batch = Y_train.sliceRow(start, end);
+					gradient = X_batch.transpose() * (sigmoid(X_batch * W) - Y_batch) / (end - start);
+					W = W - gradient * alpha;
+					break;
+				case 3:
+					Y_batch = Y_train.sliceRow(start, end);
+					for (int i = 0; i < W.getCols(); i++)
+					{
+						Wp = W.sliceCols(i, i + 1);
+						gradient = X_batch.transpose() * (softMax(X_batch * Wp) - Y_batch) / (end - start);
+						Wp = Wp - gradient * alpha;
+						for (int j = 0; j < W.getRows(); j++)
+							W(j, i) = Wp[j];
+					}
+
+					break;
+			}
 		}
 		iters--;
 	}
 }
 
-void Optimizer::sgdNesterov(int iters, double learning_rate, int mini_batch, double partion_save_grade, bool logistic)
+void Optimizer::sgdNesterov(int iters, double learning_rate, int mini_batch, double partion_save_grade, int method)
 {
 	Matrix U(W.getRows(), W.getCols(), "U");
 	Matrix gradient;
@@ -55,10 +124,21 @@ void Optimizer::sgdNesterov(int iters, double learning_rate, int mini_batch, dou
 			Matrix X_batch = X_train_norm.sliceRow(start, end);
 			Matrix Y_batch = Y_train.sliceRow(start, end);
 
-			if (!logistic)
-				gradient = X_batch.transpose() * (X_batch * (W - U * gamma) - Y_batch) * 2.0 / (end - start);
-			else
-				gradient = X_batch.transpose() * (sigmoid(X_batch * (W - U * gamma)) - Y_batch)/ (end - start);
+			switch (method)
+			{
+				case 1:
+					Y_batch = Y_train_norm.sliceRow(start, end);
+					gradient = X_batch.transpose() * (X_batch * (W - U * gamma) - Y_batch) * 2.0 / (end - start);
+					break;
+				case 2:
+					Y_batch = Y_train.sliceRow(start, end);
+					gradient = X_batch.transpose() * (sigmoid(X_batch * (W - U * gamma)) - Y_batch) / (end - start);
+					break;
+				case 3:
+					Y_batch = Y_train.sliceRow(start, end);
+					gradient = X_batch.transpose() * (softMax(X_batch * (W - U * gamma)) - Y_batch) / (end - start);
+					break;
+			}
 			U = U * gamma + gradient * alpha;
 			W = W - U;
 		}

@@ -25,6 +25,10 @@ public:
 	//принимает на вход матрицу, кол-во строк и столбцов
 	Matrix(double** matrix, int rows, int cols, string name = "");
 
+	//конструктор 3
+	//принимает на вход вектор, кол-во строк и столбцов
+	Matrix(double* matrix, int rows, int cols, string name = "");
+
 	//конструктор копирования
 	//принимает на вход матрицу того же класса
 	Matrix(const Matrix& matrix);
@@ -57,27 +61,6 @@ public:
 	//оператор []
 	//принимает на вход i элемент
 	double& operator[] (const int i) const;
-
-	////оператор суммы матриц
-	//Matrix operator+ (const Matrix& other) const;
-
-	////оператор разности матриц
-	//Matrix operator- (const Matrix& other) const;
-
-	////оператор умножения матриц
-	//Matrix operator* (const Matrix& other) const;
-
-	////оператор суммы со скаляром
-	//Matrix operator+ (double value) const;
-
-	////оператор вычитания скаляра
-	//Matrix operator- (double value) const;
-
-	////оператор умножения на скаляр
-	//Matrix operator* (double value) const;
-
-	////оператор деления на скаляр
-	//Matrix operator/ (double value) const;
 
 	//оператор присваивания
 	Matrix& operator= (const Matrix& other) noexcept;
@@ -112,12 +95,20 @@ public:
 	//длина вектора
 	double len();
 
-	//выделение подмножества матрицы
+	//выделение подмножества строк матрицы
 	Matrix sliceRow(int start, int end);
 
+	//выделение подмножества столбцов матрицы
+	Matrix sliceCols(int start, int end);
+
+	//натуральный логарифм ко всем элементам матрицы
 	Matrix logMatrx();
 
+	//сумма всех элементов матрицы
 	double sum();
+
+	//все уникальные элементы матрциы
+	Matrix unique();
 
 	//деструктор
 	~Matrix();
@@ -132,6 +123,9 @@ private:
 
 	//копирование матрицы в класс
 	void copyData(double** matrix);
+
+	//копирование вектора в класс
+	void copyVector(double* matrix);
 
 	//копирование матриц одного класса
 	void copyFrom(const Matrix& other);

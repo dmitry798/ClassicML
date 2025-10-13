@@ -28,6 +28,16 @@ Matrix::Matrix(double** matrix, int rws, int cls, string nme) : matrix(nullptr),
 	}
 }
 
+Matrix::Matrix(double* matrix, int rws, int cls, string nme) : matrix(nullptr), rows(rws), cols(cls), name(nme), dim(rows* cols)
+{
+	if (dim > 0)
+	{
+		allocateMemory();
+		copyVector(matrix);
+		//cout << "Const3 " << name << endl;
+	}
+}
+
 Matrix::Matrix(const Matrix& matrix): rows(matrix.rows), cols(matrix.cols), dim(matrix.dim), matrix(nullptr)
 {
 	if (dim > 0)
@@ -44,6 +54,7 @@ Matrix::Matrix(Matrix&& other) noexcept : rows(other.rows), cols(other.cols), na
 	other.rows = 0;
 	other.cols = 0;
 	other.name = "";
+	other.dim = 0;
 	//cout << "Const-move " << name << endl;
 }
 
@@ -66,50 +77,6 @@ double& Matrix::operator[] (const int i) const
 		throw std::out_of_range("Matrix index out of bounds");
 	return matrix[i];
 }
-
-//Matrix Matrix::operator*(double value) const
-//{
-//	Matrix result(rows, cols, "res*v");
-//
-//	for (int i = 0; i < dim; i++)
-//	{
-//		result.matrix[i] = matrix[i] * value;
-//	}
-//	return result;
-//}
-//
-//Matrix Matrix::operator+(double value) const
-//{
-//	Matrix result(rows, cols, "res+v");
-//
-//	for (int i = 0; i < dim; i++)
-//	{
-//		result.matrix[i] = matrix[i] + value;
-//	}
-//	return result;
-//}
-//
-//Matrix Matrix::operator-(double value) const
-//{
-//	Matrix result(rows, cols, "res-v");
-//
-//	for (int i = 0; i < dim; i++)
-//	{
-//		result.matrix[i] = matrix[i] - value;
-//	}
-//	return result;
-//}
-//
-//Matrix Matrix::operator/(double value) const
-//{
-//	Matrix result(rows, cols, "res/v");
-//
-//	for (int i = 0; i < dim; i++)
-//	{
-//		result.matrix[i] = matrix[i] / value;
-//	}
-//	return result;
-//}
 
 Matrix& Matrix::operator= (Matrix&& other) noexcept
 {
@@ -269,6 +236,25 @@ Matrix Matrix::sliceRow(int start, int end)
 	return result;
 }
 
+Matrix Matrix::sliceCols(int start, int end)
+{
+	if (start >= rows || end >= rows || start < 0 || end < 0 || end < start)
+		std::out_of_range("start >= dim || end >= dim || start < 0 || end < 0 || end < start");
+
+	int new_cols = end - start;
+	Matrix result(rows, new_cols, "res_slice");
+
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < new_cols; j++)
+		{
+			result.matrix[i * new_cols + j] = matrix[i * cols + (j + start)];
+		}
+	}
+
+	return result;
+}
+
 Matrix Matrix::logMatrx()
 {
 	for (int i = 0; i < dim; i++)
@@ -282,6 +268,34 @@ double Matrix::sum()
 	for (int i = 0; i < dim; i++)
 		sum_el += matrix[i];
 	return sum_el;
+}
+
+Matrix Matrix::unique()
+{
+	double* unique = new double[dim];
+	int count_elements = 0;
+	for (int i = 0; i < dim; i++) 
+	{
+		bool check = false;
+		int j = 0;
+		while (j < count_elements && check == false)
+		{
+			if (matrix[i] == unique[j])
+			{ 
+				check = true;
+			}
+			j++;
+		}
+		if (check == false)
+		{ 
+			unique[count_elements] = matrix[i]; 
+			count_elements++;
+		}
+	}
+
+	Matrix result(unique, count_elements, 1, "unique");
+	delete[] unique;
+	return result;
 }
 
 void Matrix::allocateMemory()
@@ -326,6 +340,17 @@ void Matrix::copyData(double** matrix)
 			{
 				this->matrix[i * cols + j] = matrix[i][j];
 			}
+		}
+	}
+}
+
+void Matrix::copyVector(double* matrix)
+{
+	if (dim > 0)
+	{
+		for (int i = 0; i < dim; i++)
+		{
+			this->matrix[i] = matrix[i];
 		}
 	}
 }

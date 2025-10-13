@@ -63,7 +63,7 @@ void StandartScaler::split(double ratio, bool random)
 void StandartScaler::standartNormalize()
 {
 	transform(X_train, X_test, X_train_norm, X_test_norm, mean_x, std_x);
-	//transform(Y_train, Y_test, Y_train_norm, Y_test_norm, mean_y, std_y);
+	transform(Y_train, Y_test, Y_train_norm, Y_test_norm, mean_y, std_y);
 }
 
 void StandartScaler::transform(const Matrix& Z_train, const Matrix& Z_test, Matrix& Z_train_norm, Matrix& Z_test_norm, Matrix& mean_z, Matrix& std_z)

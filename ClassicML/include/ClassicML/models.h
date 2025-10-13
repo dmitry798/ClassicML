@@ -19,7 +19,7 @@ public:
 
 	virtual void  train(const string& method, int iters, double lr, int mini_batch, double gamma) = 0;
 	virtual Matrix predict() const = 0;
-	virtual Matrix predict(Matrix& X_predict) const = 0;
+	virtual Matrix predict(Matrix& X_predict) const;
 	virtual void loss() const = 0;
 };
 
@@ -31,7 +31,7 @@ public:
 	//конструктор линейной регрессии
 	LinearRegression(Dataset& shareData);
 
-	//обучение - Метод Нестерова
+	//обучение
 	void train(const string& method, int iters = 1000, double lr = 0.01, int mini_batch = 8, double gamma = 0.01) override;
 
 	//тестирование
@@ -50,10 +50,10 @@ class LogisticRegression : public Models
 {
 public:
 
-	//конструктор линейной регрессии
+	//конструктор логистической регрессии
 	LogisticRegression(Dataset& shareData);
 
-	//обучение - Метод Нестерова
+	//обучение
 	void train(const string& method, int iters = 1000, double lr = 0.01, int mini_batch = 8, double gamma = 0.01) override;
 
 	//тестирование
@@ -66,4 +66,26 @@ public:
 	void loss() const override;
 
 	~LogisticRegression();
+};
+
+class MultiClassLogisticRegression : public Models
+{
+public:
+
+	//конструктор логистической регрессии
+	MultiClassLogisticRegression(Dataset& shareData);
+
+	//обучение
+	void train(const string& method, int iters = 1000, double lr = 0.01, int mini_batch = 8, double gamma = 0.01) override;
+
+	//тестирование
+	Matrix predict() const override;
+
+	//прогноз
+	Matrix predict(Matrix& X_predict) const override;
+
+	//ошибка
+	void loss() const override;
+
+	~MultiClassLogisticRegression();
 };

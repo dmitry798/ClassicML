@@ -37,9 +37,6 @@
     <ClInclude Include="include\ClassicML\errors.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\ClassicML\macros.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\ClassicML\matrix.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -52,7 +49,10 @@
     <ClInclude Include="include\ClassicML\preprocessor.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="matrxop.h">
+    <ClInclude Include="include\ClassicML\matrxop.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ClassicML\macros.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

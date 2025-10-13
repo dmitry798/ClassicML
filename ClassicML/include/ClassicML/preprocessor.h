@@ -43,12 +43,12 @@ private:
 	//высчитывает среднее значение и СКО, вызывает функцию norma
 	void transform(const Matrix& Z_train, const Matrix& Z_test, Matrix& Z_train_norm, Matrix& Z_test_norm, Matrix& mean_z, Matrix& std_z);
 
-	//нормализация данных
-	Matrix normalize(const Matrix& z, const Matrix& mean_z, const Matrix& std_z);
-
 public:
 
 	StandartScaler(Dataset& sharedData);
+
+	//нормализация данных
+	Matrix normalize(const Matrix& z, const Matrix& mean_z, const Matrix& std_z);
 
 	//денормализация данных для "предсказаний"
 	static Matrix denormalize(const Matrix& z, const Matrix& mean_z, const Matrix& std_z);

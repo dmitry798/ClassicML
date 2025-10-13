@@ -24,6 +24,8 @@ public:
 
 	double logLoss() const;
 
+	double logLossM() const;
+
 	double accuracy();
 
 	double precision();
