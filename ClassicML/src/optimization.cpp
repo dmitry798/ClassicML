@@ -67,6 +67,7 @@ void Optimizer::sgd(int iters, double learning_rate, int mini_batch, int method)
 	double alpha = learning_rate;
 
 	Matrix gradient;
+
 	while (iters > 0)
 	{
 		for (int start = 0; start < X_train_norm.getRows(); start += mini_batch)
@@ -74,33 +75,24 @@ void Optimizer::sgd(int iters, double learning_rate, int mini_batch, int method)
 			int end = std::min(start + mini_batch, X_train_norm.getRows());
 
 			Matrix X_batch = X_train_norm.sliceRow(start, end);
-			Matrix Y_batch; Matrix Wp;
+			Matrix Y_batch;
 
 			switch (method)
 			{
 				case 1:
 					Y_batch = Y_train_norm.sliceRow(start, end);
 					gradient = X_batch.transpose() * (X_batch * W - Y_batch) * 2.0 / (end - start);
-					W = W - gradient * alpha;
 					break;
 				case 2:
 					Y_batch = Y_train.sliceRow(start, end);
 					gradient = X_batch.transpose() * (sigmoid(X_batch * W) - Y_batch) / (end - start);
-					W = W - gradient * alpha;
 					break;
 				case 3:
 					Y_batch = Y_train.sliceRow(start, end);
-					for (int i = 0; i < W.getCols(); i++)
-					{
-						Wp = W.sliceCols(i, i + 1);
-						gradient = X_batch.transpose() * (softMax(X_batch * Wp) - Y_batch) / (end - start);
-						Wp = Wp - gradient * alpha;
-						for (int j = 0; j < W.getRows(); j++)
-							W(j, i) = Wp[j];
-					}
-
+					gradient = X_batch.transpose() * (softMax(X_batch * W) - Y_batch) / (end - start);
 					break;
 			}
+			W = W - gradient * alpha;
 		}
 		iters--;
 	}

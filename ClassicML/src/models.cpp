@@ -90,11 +90,6 @@ MultiClassLogisticRegression::MultiClassLogisticRegression(Dataset& shareData) :
 
 void MultiClassLogisticRegression::train(const string& method, int iters, double lr, int mini_batch, double gamma)
 {
-
-    Matrix W_class(X.getCols(), Y_train.unique().getRows(), "W_class");
-    W_class.random();
-    W = move(W_class);
-
     if (method == "nesterov") fit.sgdNesterov(iters, lr, mini_batch, gamma, 3);
     else if (method == "sgd") fit.sgd(iters, lr, mini_batch, 3);
     else if (method == "gd") fit.gradientDescent(iters, lr, 3);

@@ -57,11 +57,11 @@ int main()
 	};
 
 	int train_rows_y = 18;
-	int train_cols_y = 1;
-	double yy[][1] = {
-		{0}, {0}, {0}, {0}, {0}, {0},
-		{1}, {1}, {1}, {1}, {1}, {1},
-		{3}, {3}, {3}, {3}, {3}, {3}
+	int train_cols_y = 3;
+	double yy[][3] = {
+		{1, 0, 0}, {1, 0, 0}, {1, 0, 0}, {1, 0, 0}, {1, 0, 0}, {1, 0, 0},
+		{0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0},
+		{0, 0, 1}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}
 	};
 
 	double** x = copy_static_memory(xx);
@@ -78,7 +78,7 @@ int main()
 
 	// Создаем и обучаем модель
 	MultiClassLogisticRegression model(data);
-	model.train("sgd", 100, 0.1, 1);
+	model.train("sgd", 100, 0.01, 1);
 	data.Y_test.print();
 	model.predict().print();
 	model.loss();

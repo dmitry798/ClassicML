@@ -71,26 +71,8 @@ double Errors::logLoss() const
 double Errors::logLossM() const
 {
     double eps = 1e-15;
-    double logloss = 0.0;
-    int n_samples = Y_train.getRows();
-    int n_classes = Y_train.getCols();
+    double logloss = (-1.0 / Y_train.getDim()) * (Matrix(Y_train & Matrix(softMax(X_train_norm * W) + eps).logMatrx())).sum();
 
-    Matrix prob = softMax(X_train_norm * W);
-
-    for (int i = 0; i < n_samples; ++i)
-    {
-        for (int k = 0; k < n_classes; ++k)
-        {
-            if (Y_train(i, k) == 1.0)
-            {
-                double p = prob(i, k);
-                logloss += std::log(p + eps);
-                break;
-            }
-        }
-    }
-
-    // 4. Возвращаем среднее значение с обратным знаком
-    return -logloss / n_samples;
+    return logloss;
 }
 
