@@ -51,7 +51,7 @@ class LogisticRegression : public Models
 public:
 
 	//конструктор логистической регрессии
-	LogisticRegression(Dataset& shareData);
+	LogisticRegression(Dataset& shareData, string way = "binary");
 
 	//обучение
 	void train(const string& method, int iters = 1000, double lr = 0.01, int mini_batch = 8, double gamma = 0.01) override;
@@ -66,26 +66,31 @@ public:
 	void loss() const override;
 
 	~LogisticRegression();
-};
+private:
 
-class MultiClassLogisticRegression : public Models
-{
-public:
+	string way;
 
-	//конструктор логистической регрессии
-	MultiClassLogisticRegression(Dataset& shareData);
+	class MultiClassLogisticRegression : public Models
+	{
+	public:
 
-	//обучение
-	void train(const string& method, int iters = 1000, double lr = 0.01, int mini_batch = 8, double gamma = 0.01) override;
+		//конструктор логистической регрессии
+		MultiClassLogisticRegression(Dataset& shareData);
 
-	//тестирование
-	Matrix predict() const override;
+		//обучение
+		void train(const string& method, int iters = 1000, double lr = 0.01, int mini_batch = 8, double gamma = 0.01) override;
 
-	//прогноз
-	Matrix predict(Matrix& X_predict) const override;
+		//тестирование
+		Matrix predict() const override;
 
-	//ошибка
-	void loss() const override;
+		//прогноз
+		Matrix predict(Matrix& X_predict) const override;
 
-	~MultiClassLogisticRegression();
+		//ошибка
+		void loss() const override;
+
+		~MultiClassLogisticRegression();
+	};
+
+	MultiClassLogisticRegression model;
 };

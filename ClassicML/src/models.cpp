@@ -55,30 +55,45 @@ LinearRegression::~LinearRegression(){}
 
 //методы логистической регрессии
 
-LogisticRegression::LogisticRegression(Dataset& shareData) : Models(shareData) {}
+LogisticRegression::LogisticRegression(Dataset& shareData, string way) : Models(shareData), way(way), model(shareData) {}
 
 void LogisticRegression::train(const string& method, int iters, double lr, int mini_batch, double gamma)
 {
-    if (method == "nesterov") fit.sgdNesterov(iters, lr, mini_batch, gamma, 2);
-    else if (method == "sgd") fit.sgd(iters, lr, mini_batch, 2);
-    else if (method == "gd") fit.gradientDescent(iters, lr, 2);
-    else throw std::runtime_error("Unknown training method: " + method);
+    if (way == "binary")
+    {
+        if (method == "nesterov") fit.sgdNesterov(iters, lr, mini_batch, gamma, 2);
+        else if (method == "sgd") fit.sgd(iters, lr, mini_batch, 2);
+        else if (method == "gd") fit.gradientDescent(iters, lr, 2);
+        else throw std::runtime_error("Unknown training method: " + method);
+    }
+    else if (way == "multi")
+    {
+        model.train(method, iters, lr, mini_batch, gamma);
+    }
 }
 
 Matrix LogisticRegression::predict() const
 {
-    return sigmoid(X_test_norm * W);
+    if (way == "binary")
+        return sigmoid(X_test_norm * W);
+    else if (way == "multi")
+        return model.predict();
 }
 
 Matrix LogisticRegression::predict(Matrix& X_predict) const
 {
-    return sigmoid(Models::predict(X_predict));
+    if (way == "binary")
+        return sigmoid(Models::predict(X_predict));
+    else if (way == "multi")
+        return model.predict(X_predict);
 }
 
 void LogisticRegression::loss() const
 {
-
-    cout << error.logLoss();
+    if (way == "binary")
+        cout << error.logLoss();
+    else if (way == "multi")
+        model.loss();
 }
 
 LogisticRegression::~LogisticRegression() {}
@@ -86,9 +101,9 @@ LogisticRegression::~LogisticRegression() {}
 
 //методы мультиклассовой логистической регрессии
 
-MultiClassLogisticRegression::MultiClassLogisticRegression(Dataset& shareData) : Models(shareData) {}
+LogisticRegression::MultiClassLogisticRegression::MultiClassLogisticRegression(Dataset& shareData) : Models(shareData) {}
 
-void MultiClassLogisticRegression::train(const string& method, int iters, double lr, int mini_batch, double gamma)
+void LogisticRegression::MultiClassLogisticRegression::train(const string& method, int iters, double lr, int mini_batch, double gamma)
 {
     if (method == "nesterov") fit.sgdNesterov(iters, lr, mini_batch, gamma, 3);
     else if (method == "sgd") fit.sgd(iters, lr, mini_batch, 3);
@@ -96,7 +111,7 @@ void MultiClassLogisticRegression::train(const string& method, int iters, double
     else throw std::runtime_error("Unknown training method: " + method);
 }
 
-Matrix MultiClassLogisticRegression::predict() const
+Matrix LogisticRegression::MultiClassLogisticRegression::predict() const
 {
     Matrix res;
     double sum = 0.0;
@@ -108,14 +123,14 @@ Matrix MultiClassLogisticRegression::predict() const
     return res;
 }
 
-Matrix MultiClassLogisticRegression::predict(Matrix& X_predict) const
+Matrix LogisticRegression::MultiClassLogisticRegression::predict(Matrix& X_predict) const
 {
     return softMax(Models::predict(X_predict));
 }
 
-void MultiClassLogisticRegression::loss() const
+void LogisticRegression::MultiClassLogisticRegression::loss() const
 {
     cout << error.logLossM();
 }
 
-MultiClassLogisticRegression::~MultiClassLogisticRegression() {}
+LogisticRegression::MultiClassLogisticRegression::~MultiClassLogisticRegression() {}

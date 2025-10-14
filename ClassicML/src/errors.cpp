@@ -62,7 +62,7 @@ double Errors::logLoss() const
 {
     //          logloss = -1/n * sum(y_i * log(p_i) + (1-y_i)*log(1-p_i)) -> min
     double eps = 1e-15;
-    double logloss = (-1.0 / Y_train.getDim()) * (Matrix((Y_train & Matrix(sigmoid(X_train_norm * W) + eps).logMatrx()) +
+    double logloss = (-1.0 / Y_train.getRows()) * (Matrix((Y_train & Matrix(sigmoid(X_train_norm * W) + eps).logMatrx()) +
         ((1.0 - Y_train) & Matrix(1.0 - sigmoid(X_train_norm * W) + eps).logMatrx()))).sum();
 
     return logloss;
@@ -71,8 +71,7 @@ double Errors::logLoss() const
 double Errors::logLossM() const
 {
     double eps = 1e-15;
-    double logloss = (-1.0 / Y_train.getDim()) * (Matrix(Y_train & Matrix(softMax(X_train_norm * W) + eps).logMatrx())).sum();
-
+    double logloss = (-1.0 / Y_train.getRows()) * Matrix(Y_train & Matrix(softMax(X_train_norm * W) + eps).logMatrx()).sum();
     return logloss;
 }
 
