@@ -298,6 +298,16 @@ Matrix Matrix::unique()
 	return result;
 }
 
+Matrix Matrix::roundMatrx()
+{
+	Matrix result(rows, cols, "res-round");
+	for (int i = 0; i < dim; i++)
+	{
+		result[i] = round(matrix[i]);
+	}
+	return result;
+}
+
 void Matrix::allocateMemory()
 {
 	if (matrix == nullptr && dim > 0)

@@ -24,16 +24,18 @@ public:
 
 	double logLoss() const;
 
-	double logLossM() const;
+	double logLossMulti() const;
 
-	double accuracy();
+	double accuracy(double threshold) const;
 
-	double precision();
+	double precision(double threshold) const;
 
-	double recall();
+	double recall(double threshold) const;
 
-	double f1Score();
+	double f1Score(double threshold) const;
 
-	double rocAuc();
+	double rocAuc() const;
+
+	void errorsLogClassifier(string name, double threshold) const;
 };
 

@@ -28,6 +28,8 @@ namespace Data
 		Matrix mean_y;
 		Matrix std_y;
 
+		void info();
+
 		Dataset(Matrix& x, Matrix& y);
 	};
 }

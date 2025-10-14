@@ -1,7 +1,7 @@
 ﻿#include "../include/ClassicML/optimization.h"
 #include "../include/ClassicML/macros.h"
 
-Optimizer::Optimizer(Dataset& shareData): data(shareData){}
+/************************************************************************************************************************************/
 
 Matrix sigmoid(Matrix&& XW)
 {
@@ -29,6 +29,8 @@ Matrix softMax(Matrix&& XW)
 	return XW;
 }
 
+/************************************************************************************************************************************/
+
 /*
 
 Расшифровки номеров методов:
@@ -38,6 +40,8 @@ Matrix softMax(Matrix&& XW)
 	- MultiClassLogisticRegression: 3
 
 */
+
+Optimizer::Optimizer(Dataset& shareData) : data(shareData) {}
 
 void Optimizer::gradientDescent(int iters, double learning_rate, int method)
 {
@@ -113,6 +117,54 @@ void Optimizer::sgd(int iters, double learning_rate, int mini_batch, int method)
 					break;
 			}
 			W = W - gradient * alpha;
+		}
+		iters--;
+	}
+}
+
+void Optimizer::sgdMomentum(int iters, double learning_rate, int mini_batch, double partion_save_grade, int method)
+{
+	Matrix U(W.getRows(), W.getCols(), "U");
+	Matrix gradient;
+
+	double gamma = partion_save_grade;
+	double alpha = learning_rate;
+
+	while (iters > 0)
+	{
+		for (int start = 0; start < X_train_norm.getRows(); start += mini_batch)
+		{
+			int end = std::min(start + mini_batch, X_train_norm.getRows());
+
+			Matrix X_batch = X_train_norm.sliceRow(start, end);
+			Matrix Y_batch = Y_train.sliceRow(start, end);
+
+			switch (method)
+			{
+			case 0:
+				std::exception("Choice any method");
+				break;
+
+				//- LinearRegression: 1
+			case 1:
+				Y_batch = Y_train_norm.sliceRow(start, end);
+				gradient = X_batch.transpose() * (X_batch * W - Y_batch) * 2.0 / (end - start);
+				break;
+
+				//- LogisticRegression: 2
+			case 2:
+				Y_batch = Y_train.sliceRow(start, end);
+				gradient = X_batch.transpose() * (sigmoid(X_batch * W) - Y_batch) / (end - start);
+				break;
+
+				//- MultiClassLogisticRegression : 3
+			case 3:
+				Y_batch = Y_train.sliceRow(start, end);
+				gradient = X_batch.transpose() * (softMax(X_batch * W) - Y_batch) / (end - start);
+				break;
+			}
+			U = U * gamma + gradient * alpha;
+			W = W - U;
 		}
 		iters--;
 	}

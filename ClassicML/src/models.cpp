@@ -2,6 +2,25 @@
 #include "../include/ClassicML/models.h"
 #include "../include/ClassicML/macros.h"
 
+/************************************************************************************************************************************/
+
+//выбор оптимизаторов
+
+Models::Trainer::Trainer() {}
+
+void Models::Trainer::choice_train(const string& method, Optimizer& fit, int iters, double lr, int mini_batch, double gamma, int num_method)
+{
+    if (method == "nesterov") fit.sgdNesterov(iters, lr, mini_batch, gamma, num_method);
+    else if (method == "sgd") fit.sgd(iters, lr, mini_batch, num_method);
+    else if (method == "gd") fit.gradientDescent(iters, lr, num_method);
+    else if (method == "momentum") fit.sgdMomentum(iters, lr, mini_batch, gamma, num_method);
+    else throw std::runtime_error("Unknown training method: " + method);
+}
+
+/************************************************************************************************************************************/
+
+//общая структура модели
+
 Models::Models(Dataset& shareData) : data(shareData), fit(data), error(shareData) {}
 
 Matrix Models::predict(Matrix& X_predict) const
@@ -16,21 +35,20 @@ Matrix Models::predict(Matrix& X_predict) const
     return X_predict_norm * W;
 }
 
+/************************************************************************************************************************************/
+
 //методы линейной регрессии
 LinearRegression::LinearRegression(Dataset& shareData) : Models(shareData) {}
 
 void LinearRegression::train(const string& method, int iters, double lr, int mini_batch, double gamma)
 {
-    if (method == "svd") 
+    if (method == "svd")
     {
         Matrix U, s, VT;
         fit.svd(U, s, VT);
         W = VT.transpose() * s * U.transpose() * Y_train;
     }
-    else if (method == "nesterov") fit.sgdNesterov(iters, lr, mini_batch, gamma, 1);
-    else if (method == "sgd") fit.sgd(iters, lr, mini_batch, 1);
-    else if (method == "gd") fit.gradientDescent(iters, lr, 1);
-    else throw std::runtime_error("Unknown training method: " + method);
+    else trainer.choice_train(method, fit, iters, lr, mini_batch, gamma);
 }
 
 Matrix LinearRegression::predict() const
@@ -52,6 +70,7 @@ void LinearRegression::loss() const
 
 LinearRegression::~LinearRegression(){}
 
+/************************************************************************************************************************************/
 
 //методы логистической регрессии
 
@@ -61,10 +80,7 @@ void LogisticRegression::train(const string& method, int iters, double lr, int m
 {
     if (way == "binary")
     {
-        if (method == "nesterov") fit.sgdNesterov(iters, lr, mini_batch, gamma, 2);
-        else if (method == "sgd") fit.sgd(iters, lr, mini_batch, 2);
-        else if (method == "gd") fit.gradientDescent(iters, lr, 2);
-        else throw std::runtime_error("Unknown training method: " + method);
+        trainer.choice_train(method, fit, iters, lr, mini_batch, gamma);
     }
     else if (way == "multi")
     {
@@ -75,29 +91,40 @@ void LogisticRegression::train(const string& method, int iters, double lr, int m
 Matrix LogisticRegression::predict() const
 {
     if (way == "binary")
-        return sigmoid(X_test_norm * W);
+    {
+        Y_pred = sigmoid(X_test_norm * W);
+        return Y_pred;
+    }
     else if (way == "multi")
+    {
         return model.predict();
+    }
 }
 
 Matrix LogisticRegression::predict(Matrix& X_predict) const
 {
     if (way == "binary")
-        return sigmoid(Models::predict(X_predict));
+    {
+        Y_pred = sigmoid(Models::predict(X_predict));
+        return Y_pred;
+    }
     else if (way == "multi")
+    {
         return model.predict(X_predict);
+    }
 }
 
-void LogisticRegression::loss() const
+void LogisticRegression::loss(double threshold) const
 {
     if (way == "binary")
-        cout << error.logLoss();
+        error.errorsLogClassifier("logloss", threshold);
     else if (way == "multi")
-        model.loss();
+        model.loss(threshold);
 }
 
 LogisticRegression::~LogisticRegression() {}
 
+/************************************************************************************************************************************/
 
 //методы мультиклассовой логистической регрессии
 
@@ -105,32 +132,54 @@ LogisticRegression::MultiClassLogisticRegression::MultiClassLogisticRegression(D
 
 void LogisticRegression::MultiClassLogisticRegression::train(const string& method, int iters, double lr, int mini_batch, double gamma)
 {
-    if (method == "nesterov") fit.sgdNesterov(iters, lr, mini_batch, gamma, 3);
-    else if (method == "sgd") fit.sgd(iters, lr, mini_batch, 3);
-    else if (method == "gd") fit.gradientDescent(iters, lr, 3);
-    else throw std::runtime_error("Unknown training method: " + method);
+    trainer.choice_train(method, fit, iters, lr, mini_batch, gamma);
 }
 
 Matrix LogisticRegression::MultiClassLogisticRegression::predict() const
 {
-    Matrix res;
-    double sum = 0.0;
-
-    for (int i = 0; i < X_test_norm.getRows(); i++)
-    {
-        softMax(X_test_norm.sliceRow(i, i + 1) * W).print();
-    }
-    return res;
+    Y_pred = softMax(X_test_norm * W);
+    return Y_pred;
 }
 
 Matrix LogisticRegression::MultiClassLogisticRegression::predict(Matrix& X_predict) const
 {
-    return softMax(Models::predict(X_predict));
+    Y_pred = softMax(Models::predict(X_predict));
+    return Y_pred;
 }
 
-void LogisticRegression::MultiClassLogisticRegression::loss() const
+void LogisticRegression::MultiClassLogisticRegression::loss(double threshold) const
 {
-    cout << error.logLossM();
+    error.errorsLogClassifier("loglossMulti", threshold);
 }
 
 LogisticRegression::MultiClassLogisticRegression::~MultiClassLogisticRegression() {}
+
+/************************************************************************************************************************************/
+
+//методы KNN
+
+Knn::Knn(Dataset& shareData) : Models(shareData)
+{
+
+}
+
+void Knn::train()
+{
+
+}
+
+Matrix Knn::predict() const
+{
+    return Matrix();
+}
+
+Matrix Knn::predict(Matrix& X_predict) const
+{
+    return Matrix();
+}
+
+void Knn::loss() const
+{
+
+}
+

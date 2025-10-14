@@ -14,6 +14,15 @@ Dataset::Dataset(Matrix& x, Matrix& y) :
 	W.random();
 }
 
+void Dataset::info()
+{
+	Y_test.print("Y_test: ");
+	Y_pred.print("Y_predict: ");
+}
+
+/************************************************************************************************************************************/
+
+
 #include "../include/ClassicML/macros.h"
 
 StandartScaler::StandartScaler(Dataset& sharedData) : data(sharedData) {}
