@@ -245,11 +245,11 @@ void Optimizer::svd(Matrix& U, Matrix& s, Matrix& VT)
 	int iter = 0;
 
 	//"обучение"
-	while (X_current.len() > 1e-10 && comp > 0)
+	while (X_current.lenVec() > 1e-10 && comp > 0)
 	{
 		a.clear(); b.clear();
 		a.random();
-		a = a / a.len();
+		a = a / a.lenVec();
 
 		double F = 1e10;
 		double F_prev = 2e10;
@@ -281,15 +281,15 @@ void Optimizer::svd(Matrix& U, Matrix& s, Matrix& VT)
 				a[i] /= b_quad;
 			}
 			//						   X - P
-			double er = Matrix(X_current - b * a).len();
+			double er = Matrix(X_current - b * a).lenVec();
 			F = 0.5 * er * er;
 		}
 
-		double sigma = b.len() * a.len();
+		double sigma = b.lenVec() * a.lenVec();
 
 		//заполняем U, S, VT
 		for (int i = 0; i < U.getRows(); i++)
-			U(i, iter) = b[i] / b.len();
+			U(i, iter) = b[i] / b.lenVec();
 
 		//ridge-regular
 		if (sigma < 1e-5)
@@ -298,7 +298,7 @@ void Optimizer::svd(Matrix& U, Matrix& s, Matrix& VT)
 			s(iter, iter) = 1.0 / sigma;
 
 		for (int j = 0; j < VT.getCols(); j++)
-			VT(iter, j) = a[j] / a.len();
+			VT(iter, j) = a[j] / a.lenVec();
 
 		//		X = X - P
 		X_current = X_current - b * a;

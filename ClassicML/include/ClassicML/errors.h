@@ -2,7 +2,6 @@
 #include "matrix.h"
 #include "preprocessor.h"
 #include "optimization.h"
-using namespace Data;
 
 
 class Errors

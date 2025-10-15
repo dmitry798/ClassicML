@@ -93,7 +93,7 @@ public:
 	void clear();
 
 	//длина вектора
-	double len();
+	double lenVec();
 
 	//выделение подмножества строк матрицы
 	Matrix sliceRow(int start, int end);
@@ -107,11 +107,17 @@ public:
 	//сумма всех элементов матрицы
 	double sum();
 
-	//все уникальные элементы матрицы
-	Matrix unique();
+	////все уникальные элементы матрицы
+	//Matrix unique();
 
-	//округление элементов матрицы
-	Matrix roundMatrx();
+	////округление элементов матрицы
+	//Matrix roundMatrx();
+
+	////корень от всех элементов матрицы
+	//Matrix sqrtMatrx();
+
+	////модуль от всех элементов матрицы
+	//Matrix absMatrx();
 
 	//деструктор
 	~Matrix();
@@ -136,3 +142,7 @@ private:
 	//заполнение матрицы нулями
 	void zeros();
 };
+
+
+//сортировка матриц
+Matrix quickSort(Matrix matrix);

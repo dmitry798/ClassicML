@@ -3,7 +3,6 @@
 #include "preprocessor.h"
 #include "optimization.h"
 #include "errors.h"
-using namespace Data;
 
 
 //абстрактный класс для всех моделей
@@ -27,9 +26,7 @@ protected:
 public:
 
 	Models(Dataset& shareData);
-
-	virtual Matrix predict() const = 0;
-	virtual Matrix predict(Matrix& X_predict) const;
+	virtual Matrix predict(Matrix& X_predict);
 };
 
 
@@ -46,13 +43,13 @@ public:
 	void train(const string& method, int iters = 1000, double lr = 0.01, int mini_batch = 8, double gamma = 0.01);
 
 	//тестирование
-	Matrix predict() const override;
+	Matrix predict();
 
 	//прогноз
-	Matrix predict(Matrix& X_predict) const override;
+	Matrix predict(Matrix& X_predict) override;
 
 	//ошибка
-	void loss() const;
+	void loss();
 
 	~LinearRegression();
 };
@@ -71,13 +68,13 @@ public:
 	void train(const string& method, int iters = 1000, double lr = 0.01, int mini_batch = 8, double gamma = 0.01);
 
 	//тестирование
-	Matrix predict() const override;
+	Matrix predict();
 
 	//прогноз
-	Matrix predict(Matrix& X_predict) const override;
+	Matrix predict(Matrix& X_predict) override;
 
 	//ошибка
-	void loss(double threshold) const;
+	void loss(double threshold);
 
 	~LogisticRegression();
 private:
@@ -98,13 +95,13 @@ private:
 		void train(const string& method, int iters = 1000, double lr = 0.01, int mini_batch = 8, double gamma = 0.01);
 
 		//тестирование
-		Matrix predict() const override;
+		Matrix predict();
 
 		//прогноз
-		Matrix predict(Matrix& X_predict) const override;
+		Matrix predict(Matrix& X_predict) override;
 
 		//ошибка
-		void loss(double threshold) const;
+		void loss(double threshold);
 
 		~MultiClassLogisticRegression();
 	};
@@ -116,22 +113,27 @@ private:
 
 class Knn : public Models
 {
+private:
+
+	int num_neighbors;
+
+	Matrix manhattan(Matrix& feature);
+
+	Matrix evklid(Matrix& feature);
+
 public:
 
 	//конструктор Knn
-	Knn(Dataset& shareData);
-
-	//обучение
-	void train();
+	Knn(Dataset& shareData, int num_neighbors);
 
 	//тестирование
-	Matrix predict() const override;
+	Matrix predict(string distance = "evklid");
 
 	//прогноз
-	Matrix predict(Matrix& X_predict) const override;
+	Matrix predict(Matrix& X_predict, string distance = "evklid");
 
 	//ошибка
-	void loss() const;
+	void loss(double threshold);
 
 	~Knn();
 };

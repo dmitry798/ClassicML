@@ -23,7 +23,7 @@ void Models::Trainer::choice_train(const string& method, Optimizer& fit, int ite
 
 Models::Models(Dataset& shareData) : data(shareData), fit(data), error(shareData) {}
 
-Matrix Models::predict(Matrix& X_predict) const
+Matrix Models::predict(Matrix& X_predict)
 {
     StandartScaler scaler(data);
 
@@ -51,19 +51,19 @@ void LinearRegression::train(const string& method, int iters, double lr, int min
     else trainer.choice_train(method, fit, iters, lr, mini_batch, gamma);
 }
 
-Matrix LinearRegression::predict() const
+Matrix LinearRegression::predict()
 {
 	StandartScaler scaler(data);
 	Y_pred = scaler.denormalize(X_test_norm * W, mean_y, std_y);
 	return Y_pred;
 }
 
-Matrix LinearRegression::predict(Matrix& X_predict) const
+Matrix LinearRegression::predict(Matrix& X_predict)
 {
-    return predict(X_predict);
+    return Models::predict(X_predict);
 }
 
-void LinearRegression::loss() const
+void LinearRegression::loss()
 {
 	error.errorsRegression();
 }
@@ -88,7 +88,7 @@ void LogisticRegression::train(const string& method, int iters, double lr, int m
     }
 }
 
-Matrix LogisticRegression::predict() const
+Matrix LogisticRegression::predict()
 {
     if (way == "binary")
     {
@@ -101,7 +101,7 @@ Matrix LogisticRegression::predict() const
     }
 }
 
-Matrix LogisticRegression::predict(Matrix& X_predict) const
+Matrix LogisticRegression::predict(Matrix& X_predict)
 {
     if (way == "binary")
     {
@@ -114,7 +114,7 @@ Matrix LogisticRegression::predict(Matrix& X_predict) const
     }
 }
 
-void LogisticRegression::loss(double threshold) const
+void LogisticRegression::loss(double threshold)
 {
     if (way == "binary")
         error.errorsLogClassifier("logloss", threshold);
@@ -135,19 +135,19 @@ void LogisticRegression::MultiClassLogisticRegression::train(const string& metho
     trainer.choice_train(method, fit, iters, lr, mini_batch, gamma);
 }
 
-Matrix LogisticRegression::MultiClassLogisticRegression::predict() const
+Matrix LogisticRegression::MultiClassLogisticRegression::predict()
 {
     Y_pred = softMax(X_test_norm * W);
     return Y_pred;
 }
 
-Matrix LogisticRegression::MultiClassLogisticRegression::predict(Matrix& X_predict) const
+Matrix LogisticRegression::MultiClassLogisticRegression::predict(Matrix& X_predict)
 {
     Y_pred = softMax(Models::predict(X_predict));
     return Y_pred;
 }
 
-void LogisticRegression::MultiClassLogisticRegression::loss(double threshold) const
+void LogisticRegression::MultiClassLogisticRegression::loss(double threshold)
 {
     error.errorsLogClassifier("loglossMulti", threshold);
 }
@@ -158,28 +158,89 @@ LogisticRegression::MultiClassLogisticRegression::~MultiClassLogisticRegression(
 
 //методы KNN
 
-Knn::Knn(Dataset& shareData) : Models(shareData)
+Matrix Knn::manhattan(Matrix& feature)
 {
-
+    Matrix result(X_train.getRows(), 1);
+    for (int i = 0; i < X_train.getRows(); i++)
+    {
+        double sum = 0.0;
+        for (int j = 0; j < X_train.getCols(); j++) 
+            sum += abs(feature[j] - X_train_norm(i, j));
+        result[i] = sum;
+    }
+    return result;
 }
 
-void Knn::train()
+Matrix Knn::evklid(Matrix& feature)
 {
-
+    Matrix result(X_train.getRows(), 1);
+    for (int i = 0; i < X_train.getRows(); i++)
+    {
+        double sum = 0.0;
+        for (int j = 0; j < X_train.getCols(); j++)
+        {
+            double diff = 0.0;
+            diff += feature[j] - X_train_norm(i, j);
+            sum += diff * diff;
+        }
+        result[i] = sqrt(sum);
+    }
+    return result;
 }
 
-Matrix Knn::predict() const
+Knn::Knn(Dataset& shareData, int num_neighbors) : Models(shareData), num_neighbors(num_neighbors) {}
+
+Matrix Knn::predict(string distance)
 {
-    return Matrix();
+    Matrix dist;
+    if (distance == "evklid") dist = evklid(X_test_norm);
+    else if (distance == "manhattan") dist = manhattan(X_test_norm);
+    dist = quickSort(dist).sliceRow(0, num_neighbors);
+    Matrix concate(X_test_norm.getRows(), 2, "concate-X+Y");
+
+    for (int i = 0; i < num_neighbors; i++)
+    {
+        concate(i, 0) = dist[i];
+        for (int j = 0; j < Y_test.getCols(); j++)
+            if (Y_test[j] == 1)
+                concate(i, 1) = j + 1;
+    }
+    Y_pred = concate;
+    return Y_pred;
 }
 
-Matrix Knn::predict(Matrix& X_predict) const
+// WIP
+
+Matrix Knn::predict(Matrix& X_predict, string distance)
 {
-    return Matrix();
+    StandartScaler scaler(data);
+
+    Matrix mean(X_predict.getCols(), 1, "mean"); Matrix std(X_predict.getCols(), 1, "std");
+    mean.mean(X_predict); std.std(X_predict, mean);
+
+    Matrix&& X_predict_norm = scaler.normalize(X_predict, mean, std);
+
+
+    Matrix dist;
+    if (distance == "evklid") dist = evklid(X_predict_norm);
+    else if (distance == "manhattan") dist = manhattan(X_predict_norm);
+
+    Matrix concate(X_predict_norm.getRows(), 2, "concate-X+Y");
+
+    for (int i = 0; i < X_predict_norm.getRows(); i++)
+    {
+        concate(i, 0) = dist[i];
+        for (int j = 0; j < Y.getCols(); j++)
+            if (Y[j] == 1)
+                concate(i, 1) = j + 1;
+    }
+    return concate;
 }
 
-void Knn::loss() const
+void Knn::loss(double threshold)
 {
-
+    error.errorsLogClassifier("loglossMulti", threshold);
 }
+
+Knn::~Knn() {}
 

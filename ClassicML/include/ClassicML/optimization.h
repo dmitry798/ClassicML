@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "matrix.h"
 #include "preprocessor.h"
-using namespace Data;
 
 //сигмоида
 Matrix sigmoid(Matrix&& XW);

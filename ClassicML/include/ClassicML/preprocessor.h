@@ -1,40 +1,35 @@
 ﻿#pragma once
 #include "matrix.h"
 
-namespace Data
+//сумка данных
+struct Dataset
 {
-	//сумка данных
-	struct Dataset
-	{
-	public:
-		Matrix X;
-		Matrix Y;
-		Matrix W;
+public:
+	Matrix X;
+	Matrix Y;
+	Matrix W;
 
-		Matrix X_train;
-		Matrix Y_train;
-		Matrix X_test;
-		Matrix Y_test;
+	Matrix X_train;
+	Matrix Y_train;
+	Matrix X_test;
+	Matrix Y_test;
 
-		Matrix Y_pred;
+	Matrix Y_pred;
 
-		Matrix X_train_norm;
-		Matrix Y_train_norm;
-		Matrix X_test_norm;
-		Matrix Y_test_norm;
+	Matrix X_train_norm;
+	Matrix Y_train_norm;
+	Matrix X_test_norm;
+	Matrix Y_test_norm;
 
-		Matrix mean_x;
-		Matrix std_x;
-		Matrix mean_y;
-		Matrix std_y;
+	Matrix mean_x;
+	Matrix std_x;
+	Matrix mean_y;
+	Matrix std_y;
 
-		void info();
+	void info();
 
-		Dataset(Matrix& x, Matrix& y);
-	};
-}
-
-using namespace Data;
+	Dataset(Matrix& x, Matrix& y);
+};
 
 class StandartScaler
 {

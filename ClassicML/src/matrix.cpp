@@ -206,7 +206,7 @@ Matrix Matrix::transpose() const
     return result;
 }
 
-double Matrix::len()
+double Matrix::lenVec()
 {
 	double len = 0.0;
 	for (int i = 0; i < dim; i++)
@@ -270,43 +270,101 @@ double Matrix::sum()
 	return sum_el;
 }
 
-Matrix Matrix::unique()
+Matrix quickSort(Matrix matrix)
 {
-	double* unique = new double[dim];
-	int count_elements = 0;
-	for (int i = 0; i < dim; i++) 
+	/*if (matrix.getDim() < 1)
+		return matrix;
+
+	double pivot = matrix[int(matrix.getDim() / 2)];
+
+	Matrix left(matrix.getRows(), matrix.getCols());
+	for (int i = 0; i < matrix.getDim(); i++)
+		if (matrix[i] < pivot)
+			left[i] = matrix[i];
+
+	double middle = 0.0;
+	for (int i = 0; i < matrix.getDim(); i++)
+		if (matrix[i] == pivot)
+			middle = matrix[i];
+
+	Matrix right(matrix.getRows(), matrix.getCols());
+	for (int i = 0; i < matrix.getDim(); i++)
+		if (matrix[i] > pivot)
+			right[i] = matrix[i];*/
+
+	for (int i = 0; i < matrix.getDim(); i++)
 	{
-		bool check = false;
-		int j = 0;
-		while (j < count_elements && check == false)
+		for (int j = 0; j < matrix.getRows(); j++)
 		{
-			if (matrix[i] == unique[j])
-			{ 
-				check = true;
+			if (matrix[i] < matrix[j])
+			{
+				double temp = matrix[i];
+				matrix[i] = matrix[j];
+				matrix[j] = temp;
 			}
-			j++;
-		}
-		if (check == false)
-		{ 
-			unique[count_elements] = matrix[i]; 
-			count_elements++;
 		}
 	}
 
-	Matrix result(unique, count_elements, 1, "unique");
-	delete[] unique;
-	return result;
+	return matrix;
 }
 
-Matrix Matrix::roundMatrx()
-{
-	Matrix result(rows, cols, "res-round");
-	for (int i = 0; i < dim; i++)
-	{
-		result[i] = round(matrix[i]);
-	}
-	return result;
-}
+//Matrix Matrix::unique()
+//{
+//	double* unique = new double[dim];
+//	int count_elements = 0;
+//	for (int i = 0; i < dim; i++) 
+//	{
+//		bool check = false;
+//		int j = 0;
+//		while (j < count_elements && check == false)
+//		{
+//			if (matrix[i] == unique[j])
+//			{ 
+//				check = true;
+//			}
+//			j++;
+//		}
+//		if (check == false)
+//		{ 
+//			unique[count_elements] = matrix[i]; 
+//			count_elements++;
+//		}
+//	}
+//
+//	Matrix result(unique, count_elements, 1, "unique");
+//	delete[] unique;
+//	return result;
+//}
+//
+//Matrix Matrix::roundMatrx()
+//{
+//	Matrix result(rows, cols, "res-round");
+//	for (int i = 0; i < dim; i++)
+//	{
+//		result[i] = round(matrix[i]);
+//	}
+//	return result;
+//}
+//
+//Matrix Matrix::sqrtMatrx()
+//{
+//	Matrix result(rows, cols, "res-sqrt");
+//	for (int i = 0; i < dim; i++)
+//	{
+//		result[i] = sqrt(result[i]);
+//	}
+//	return result;
+//}
+//
+//Matrix Matrix::absMatrx()
+//{
+//	Matrix result(rows, cols, "res-abs");
+//	for (int i = 0; i < dim; i++)
+//	{
+//		result[i] = abs(result[i]);
+//	}
+//	return result;
+//}
 
 void Matrix::allocateMemory()
 {

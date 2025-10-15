@@ -79,9 +79,8 @@ int main()
     scaler.standartNormalize();
 
 	// Создаем и обучаем модель
-	LogisticRegression model(data, "multi");
-	model.train("momentum", 90, 0.1, 8);
-	model.predict();
+	Knn model(data, 3);
+	model.predict().print();
 	model.loss(0.99);
 	data.info();
 

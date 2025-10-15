@@ -1,5 +1,4 @@
 ﻿#include "../include/ClassicML/preprocessor.h"
-using namespace Data;
 
 Dataset::Dataset(Matrix& x, Matrix& y) :
 	X(move(x)),
