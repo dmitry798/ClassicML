@@ -79,9 +79,9 @@ int main()
     scaler.standartNormalize();
 
 	// Создаем и обучаем модель
-	Knn model(data, 3);
+	Knn model(data, 4);
 	model.predict().print();
-	model.loss(0.99);
+	/*model.loss(0.99);*/
 	data.info();
 
 

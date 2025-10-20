@@ -146,3 +146,6 @@ private:
 
 //сортировка матриц
 Matrix quickSort(Matrix matrix);
+
+//мода элементов
+int mode(const Matrix& col);

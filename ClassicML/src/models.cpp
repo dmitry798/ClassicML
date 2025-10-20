@@ -158,7 +158,7 @@ LogisticRegression::MultiClassLogisticRegression::~MultiClassLogisticRegression(
 
 //методы KNN
 
-Matrix Knn::manhattan(Matrix& feature)
+Matrix Knn::manhattan(Matrix&& feature)
 {
     Matrix result(X_train.getRows(), 1);
     for (int i = 0; i < X_train.getRows(); i++)
@@ -171,7 +171,7 @@ Matrix Knn::manhattan(Matrix& feature)
     return result;
 }
 
-Matrix Knn::evklid(Matrix& feature)
+Matrix Knn::evklid(Matrix&& feature)
 {
     Matrix result(X_train.getRows(), 1);
     for (int i = 0; i < X_train.getRows(); i++)
@@ -192,20 +192,48 @@ Knn::Knn(Dataset& shareData, int num_neighbors) : Models(shareData), num_neighbo
 
 Matrix Knn::predict(string distance)
 {
-    Matrix dist;
-    if (distance == "evklid") dist = evklid(X_test_norm);
-    else if (distance == "manhattan") dist = manhattan(X_test_norm);
-    dist = quickSort(dist).sliceRow(0, num_neighbors);
-    Matrix concate(X_test_norm.getRows(), 2, "concate-X+Y");
-
-    for (int i = 0; i < num_neighbors; i++)
+    Y_pred = Matrix(X_test_norm.getRows(), 1);
+    //проходимся по всем тестовым точкам
+    for (int t = 0; t < X_test_norm.getRows(); t++)
     {
-        concate(i, 0) = dist[i];
-        for (int j = 0; j < Y_test.getCols(); j++)
-            if (Y_test[j] == 1)
-                concate(i, 1) = j + 1;
+        Matrix dist;
+
+        //рассчитываем расстояние
+        if (distance == "evklid") dist = evklid(move(X_test_norm.sliceRow(t, t + 1)));
+        else if (distance == "manhattan") dist = manhattan(move(X_test_norm.sliceRow(t, t + 1)));
+
+        //делаем матрицу из расстояний и принадлежности к классу
+        Matrix concate(X_train_norm.getRows(), 2, "concate-X+Y");
+        for (int i = 0; i < X_train_norm.getRows(); i++)
+        {
+            concate(i, 0) = dist[i];
+            for (int j = 0; j < Y_train.getCols(); j++)
+                if (Y_train(i, j) == 1)
+                    concate(i, 1) = j + 1;
+        }
+        //сортируем по расстоянию
+        for (int i = 0; i < concate.getRows(); i++)
+        {
+            for (int j = 0; j < concate.getRows(); j++)
+            {
+                if (concate(i, 0) < concate(j, 0))
+                {
+                    double temp1 = concate(i, 0);
+                    double temp2 = concate(i, 1);
+                    concate(i, 0) = concate(j, 0);
+                    concate(i, 1) = concate(j, 1);
+                    concate(j, 0) = temp1;
+                    concate(j, 1) = temp2;
+                }
+            }
+        }
+
+        Matrix sorted = concate.sliceRow(0, num_neighbors);
+
+        //выбираем часто встречающиеся
+        int pred = mode(sorted.sliceCols(1, 2));
+        Y_pred(t, 0) = pred;
     }
-    Y_pred = concate;
     return Y_pred;
 }
 
@@ -221,20 +249,49 @@ Matrix Knn::predict(Matrix& X_predict, string distance)
     Matrix&& X_predict_norm = scaler.normalize(X_predict, mean, std);
 
 
-    Matrix dist;
-    if (distance == "evklid") dist = evklid(X_predict_norm);
-    else if (distance == "manhattan") dist = manhattan(X_predict_norm);
-
-    Matrix concate(X_predict_norm.getRows(), 2, "concate-X+Y");
-
-    for (int i = 0; i < X_predict_norm.getRows(); i++)
+    Y_pred = Matrix(X_predict_norm.getRows(), 1);
+    //проходимся по всем тестовым точкам
+    for (int t = 0; t < X_predict_norm.getRows(); t++)
     {
-        concate(i, 0) = dist[i];
-        for (int j = 0; j < Y.getCols(); j++)
-            if (Y[j] == 1)
-                concate(i, 1) = j + 1;
+        Matrix dist;
+
+        //рассчитываем расстояние
+        if (distance == "evklid") dist = evklid(move(X_predict_norm.sliceRow(t, t + 1)));
+        else if (distance == "manhattan") dist = manhattan(move(X_predict_norm.sliceRow(t, t + 1)));
+
+        //делаем матрицу из расстояний и принадлежности к классу
+        Matrix concate(X_train_norm.getRows(), 2, "concate-X+Y");
+        for (int i = 0; i < X_train_norm.getRows(); i++)
+        {
+            concate(i, 0) = dist[i];
+            for (int j = 0; j < Y_train.getCols(); j++)
+                if (Y_train(i, j) == 1)
+                    concate(i, 1) = j + 1;
+        }
+        //сортируем по расстоянию
+        for (int i = 0; i < concate.getRows(); i++)
+        {
+            for (int j = 0; j < concate.getRows(); j++)
+            {
+                if (concate(i, 0) < concate(j, 0))
+                {
+                    double temp1 = concate(i, 0);
+                    double temp2 = concate(i, 1);
+                    concate(i, 0) = concate(j, 0);
+                    concate(i, 1) = concate(j, 1);
+                    concate(j, 0) = temp1;
+                    concate(j, 1) = temp2;
+                }
+            }
+        }
+
+        Matrix sorted = concate.sliceRow(0, num_neighbors);
+
+        //выбираем часто встречающиеся
+        int pred = mode(sorted.sliceCols(1, 2));
+        Y_pred(t, 0) = pred;
     }
-    return concate;
+    return Y_pred;
 }
 
 void Knn::loss(double threshold)

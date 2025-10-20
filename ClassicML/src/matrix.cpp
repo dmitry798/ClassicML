@@ -308,6 +308,33 @@ Matrix quickSort(Matrix matrix)
 	return matrix;
 }
 
+int mode(const Matrix& col)
+{
+	int n = col.getRows();
+	int maxCount = 0;
+	int modeValue = 0;
+
+	for (int i = 0; i < n; i++)
+	{
+		int count = 0;
+		double current = col[i];
+
+		for (int j = 0; j < n; j++)
+		{
+			if (col[j] == current)
+				count++;
+		}
+
+		if (count > maxCount)
+		{
+			maxCount = count;
+			modeValue = static_cast<int>(current);
+		}
+	}
+
+	return modeValue;
+}
+
 //Matrix Matrix::unique()
 //{
 //	double* unique = new double[dim];
