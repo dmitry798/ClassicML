@@ -474,3 +474,4 @@ Matrix::~Matrix()
 		//cout << "deConst " << name << endl;
 		freeMemory();
 }
+

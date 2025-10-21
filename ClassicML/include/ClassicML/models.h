@@ -137,3 +137,30 @@ public:
 
 	~Knn();
 };
+
+class KnnRegression : public Models
+{
+private:
+
+	int num_neighbors;
+
+	Matrix manhattan(Matrix&& feature);
+
+	Matrix evklid(Matrix&& feature);
+
+public:
+
+	//конструктор Knn
+	KnnRegression(Dataset& shareData, int num_neighbors);
+
+	//тестирование
+	Matrix predict(string distance = "evklid");
+
+	//прогноз
+	Matrix predict(Matrix& X_predict, string distance = "evklid");
+
+	//ошибка
+	void loss();
+
+	~KnnRegression();
+};
