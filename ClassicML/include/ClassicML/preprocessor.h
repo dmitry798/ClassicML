@@ -58,3 +58,5 @@ public:
 };
 
 Matrix OneHotEncoder(Matrix& Z);
+
+Matrix DecoderOHT(Matrix& Z);

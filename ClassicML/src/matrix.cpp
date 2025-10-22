@@ -343,6 +343,25 @@ Matrix Matrix::unique()
 	delete[] unique;
 	return result;
 }
+Matrix Matrix::sortRows(int t)
+{
+	for (int i = 0; i < this->getRows() - 1; i++)
+	{
+		for (int j = 0; j < this->getRows() - i - 1; j++)
+		{
+			if ((*this)(j, t) > (*this)(j + 1, t))
+			{
+				for (int k = 0; k < this->getCols(); k++)
+				{
+					double temp = (*this)(j, k);
+					(*this)(j, k) = (*this)(j + 1, k);
+					(*this)(j + 1, k) = temp;
+				}
+			}
+		}
+	}
+	return *this;
+}
 //
 //Matrix Matrix::roundMatrx()
 //{

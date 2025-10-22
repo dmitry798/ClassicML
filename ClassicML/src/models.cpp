@@ -181,21 +181,7 @@ Matrix Knn::predict(string distance)
                     concate(i, 1) = j + 1;
         }
         //сортируем по расстоянию
-        for (int i = 0; i < concate.getRows() - 1; i++) 
-        {
-            for (int j = 0; j < concate.getRows() - i - 1; j++) 
-            {
-                if (concate(j, 0) > concate(j + 1, 0)) 
-                {
-                    for (int k = 0; k < concate.getCols(); k++) 
-                    {
-                        double temp = concate(j, k);
-                        concate(j, k) = concate(j + 1, k);
-                        concate(j + 1, k) = temp;
-                    }
-                }
-            }
-        }
+        concate.sortRows(0);
 
         Matrix sorted = concate.sliceRow(0, num_neighbors);
 
@@ -261,8 +247,8 @@ Matrix Knn::predict(Matrix& X_predict, string distance)
         else if (distance == "manhattan") dist = dist_method.manhattan(move(X_predict_norm.sliceRow(t, t + 1)));
 
         //делаем матрицу из расстояний и принадлежности к классу
-        Matrix concate(X_train_norm.getRows(), 2, "concate-X+Y");
-        for (int i = 0; i < X_train_norm.getRows(); i++)
+        Matrix concate(X_predict_norm.getRows(), 2, "concate-X+Y");
+        for (int i = 0; i < X_predict_norm.getRows(); i++)
         {
             concate(i, 0) = dist[i];
             for (int j = 0; j < Y_train.getCols(); j++)
@@ -270,21 +256,7 @@ Matrix Knn::predict(Matrix& X_predict, string distance)
                     concate(i, 1) = j + 1;
         }
         //сортируем по расстоянию
-        for (int i = 0; i < concate.getRows() - 1; i++) 
-        {
-            for (int j = 0; j < concate.getRows() - i - 1; j++) 
-            {
-                if (concate(j, 0) > concate(j + 1, 0)) 
-                {
-                    for (int k = 0; k < concate.getCols(); k++) 
-                    {
-                        double temp = concate(j, k);
-                        concate(j, k) = concate(j + 1, k);
-                        concate(j + 1, k) = temp;
-                    }
-                }
-            }
-        }
+        concate.sortRows(0);
 
         Matrix sorted = concate.sliceRow(0, num_neighbors);
 
@@ -331,7 +303,8 @@ Matrix Knn::predict(Matrix& X_predict, string distance)
 
 void Knn::loss(double threshold)
 {
-    error.errorsLogClassifier("loglossMulti", threshold);
+    Y_test = DecoderOHT(Y_test);
+    error.errorsKnnClassifier();
 }
 
 Knn::~Knn() {}
@@ -364,21 +337,7 @@ Matrix KnnRegression::predict(string distance)
         }
 
         //сортируем по расстоянию
-        for (int i = 0; i < concate.getRows() - 1; i++) 
-        {
-            for (int j = 0; j < concate.getRows() - i - 1; j++) 
-            {
-                if (concate(j, 0) > concate(j + 1, 0)) 
-                {
-                    for (int k = 0; k < concate.getCols(); k++) 
-                    {
-                        double temp = concate(j, k);
-                        concate(j, k) = concate(j + 1, k);
-                        concate(j + 1, k) = temp;
-                    }
-                }
-            }
-        }
+        concate.sortRows(0);
 
         Matrix sorted = concate.sliceRow(0, num_neighbors);
 
@@ -405,7 +364,7 @@ Matrix KnnRegression::predict(string distance)
 
                 for (int i = 0; i < distances.getRows(); i++)
                 {
-                    double d = distances(i, 0);
+                    double d = distances[i];
                     if (d == 0) d = 1e-6;
                     double w = 1.0 / d;
 
@@ -449,21 +408,7 @@ Matrix KnnRegression::predict(Matrix& X_predict, string distance)
                 concate(i, j + 1) = Y_train(i, j);
         }
         //сортируем по расстоянию
-        for (int i = 0; i < concate.getRows() - 1; i++)
-        {
-            for (int j = 0; j < concate.getRows() - i - 1; j++)
-            {
-                if (concate(j, 0) > concate(j + 1, 0))
-                {
-                    for (int k = 0; k < concate.getCols(); k++)
-                    {
-                        double temp = concate(j, k);
-                        concate(j, k) = concate(j + 1, k);
-                        concate(j + 1, k) = temp;
-                    }
-                }
-            }
-        }
+        concate.sortRows(0);
 
         Matrix sorted = concate.sliceRow(0, num_neighbors);
 

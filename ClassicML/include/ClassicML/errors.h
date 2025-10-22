@@ -25,16 +25,18 @@ public:
 
 	double logLossMulti() const;
 
-	double accuracy(double threshold) const;
+	double accuracy(double threshold = 0.5) const;
 
-	double precision(double threshold) const;
+	double accuracyMultiClss() const;
 
-	double recall(double threshold) const;
+	double precision(double threshold = 0.5) const;
 
-	double f1Score(double threshold) const;
+	double recall(double threshold = 0.5) const;
 
-	double rocAuc() const;
+	double f1Score(double threshold = 0.5) const;
 
-	void errorsLogClassifier(string name, double threshold) const;
+	void errorsLogClassifier(string name, double threshold = 0.5) const;
+
+	void errorsKnnClassifier() const;
 };
 

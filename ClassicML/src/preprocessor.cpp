@@ -146,7 +146,6 @@ Matrix OneHotEncoder(Matrix& Z)
 				if (Z_slice[r] == unique_vals[j])
 				{
 					result(r, current_col + j) = 1;
-					break;
 				}
 			}
 		}
@@ -154,4 +153,16 @@ Matrix OneHotEncoder(Matrix& Z)
 	}
 
 	return result;
+}
+
+Matrix DecoderOHT(Matrix& Z)
+{
+	Matrix concate(Z.getRows(), 1, "Z");
+	for (int i = 0; i < Z.getRows(); i++)
+	{
+		for (int j = 0; j < Z.getCols(); j++)
+			if (Z(i, j) == 1)
+				concate[i] = j + 1;
+	}
+	return concate;
 }

@@ -89,6 +89,19 @@ double Errors::accuracy(double threshold) const
     return pred_answer / true_answer;
 }
 
+double Errors::accuracyMultiClss() const
+{
+    double true_answer = Y_pred.getRows();
+    double pred_answer = 0.0;
+
+    for (int i = 0; i < Y_pred.getDim(); i++)
+    {
+        if (Y_pred[i] == Y_test[i])
+            pred_answer++;
+    }
+    return pred_answer / true_answer;
+}
+
 double Errors::precision(double threshold) const
 {
     int tp = 0;
@@ -141,5 +154,12 @@ void Errors::errorsLogClassifier(string name, double threshold) const
         "f1Score: " << f1Score(threshold) << endl
         << endl;
 
+}
+
+void Errors::errorsKnnClassifier() const
+{
+    cout <<
+        "accuracy: " << accuracyMultiClss() << endl
+        << endl;
 }
 

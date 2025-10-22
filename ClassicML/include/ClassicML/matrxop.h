@@ -189,6 +189,7 @@ struct MatrxDivVal2Op
 	//операция деления матрицы на скаляр
 	double operator[](int i) const
 	{
+
 		return b_ / a_[i];
 	}
 
