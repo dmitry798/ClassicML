@@ -117,12 +117,14 @@ private:
 
 	int num_neighbors;
 
+	string weighted;
+
 	Distance dist_method;
 
 public:
 
 	//конструктор Knn
-	Knn(Dataset& shareData, int num_neighbors);
+	Knn(Dataset& shareData, int num_neighbors, string weighted = "uniform");
 
 	//тестирование
 	Matrix predict(string distance = "evklid");
@@ -142,12 +144,14 @@ private:
 
 	int num_neighbors;
 
+	string weighted;
+
 	Distance dist_method;
 
 public:
 
 	//конструктор Knn
-	KnnRegression(Dataset& shareData, int num_neighbors);
+	KnnRegression(Dataset& shareData, int num_neighbors, string weighted = "uniform");
 
 	//тестирование
 	Matrix predict(string distance = "evklid");

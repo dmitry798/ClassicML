@@ -170,6 +170,32 @@ struct MatrxDivValOp
 };
 
 template<typename A>
+struct MatrxDivVal2Op
+{
+	MatrxDivVal2Op(const double& b, const A& a) : a_(a), b_(b), rows(a_.getRows()), cols(a_.getCols()) {}
+
+	const A& a_;
+	const double& b_;
+
+	int rows;
+	int cols;
+
+	int getRows() const { return rows; }
+
+	int getCols() const { return cols; }
+
+	int getDim() const { return rows * cols; }
+
+	//операция деления матрицы на скаляр
+	double operator[](int i) const
+	{
+		return b_ / a_[i];
+	}
+
+	double operator()(int i, int j) const { return (*this)[i * getCols() + j]; }
+};
+
+template<typename A>
 struct MatrxMulValOp
 {
 	MatrxMulValOp(const A& a, const double& b) : a_(a), b_(b), rows(a_.getRows()), cols(a_.getCols()) {}
@@ -297,6 +323,10 @@ MatrxMulElOp<A, B> operator& (const A& matrix, const B& other) { return { matrix
 //оператор деления матрицы со скаляром
 template<typename A>
 MatrxDivValOp<A> operator/ (const A& matrix, const double& other) { return { matrix, other }; }
+
+//оператор деления матрицы со скаляром
+template<typename A>
+MatrxDivVal2Op<A> operator/ (const double& other, const A& matrix) { return { other, matrix }; }
 
 //оператор умножения матрицы со скаляром
 template<typename A>
