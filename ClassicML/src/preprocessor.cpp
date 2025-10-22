@@ -119,3 +119,39 @@ Matrix StandartScaler::denormalize(const Matrix& z, const Matrix& mean_z, const 
 	}
 	return denormalized_z;
 }
+
+
+
+Matrix OneHotEncoder(Matrix& Z)
+{
+	int total_cols = 0;
+
+	for (int i = 0; i < Z.getCols(); i++)
+	{
+		Matrix Z_slice = Z.sliceCols(i, i + 1);
+		total_cols += Z_slice.unique().getRows();
+	}
+
+	Matrix result(Z.getRows(), total_cols);
+
+	int current_col = 0;
+	for (int i = 0; i < Z.getCols(); i++)
+	{
+		Matrix Z_slice = Z.sliceCols(i, i + 1);
+		Matrix unique_vals = Z_slice.unique();
+		for (int r = 0; r < Z.getRows(); r++)
+		{
+			for (int j = 0; j < unique_vals.getRows(); j++)
+			{
+				if (Z_slice[r] == unique_vals[j])
+				{
+					result(r, current_col + j) = 1;
+					break;
+				}
+			}
+		}
+		current_col += unique_vals.getRows();
+	}
+
+	return result;
+}

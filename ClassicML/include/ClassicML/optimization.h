@@ -11,6 +11,7 @@ Matrix softMax(Matrix&& XW);
 class Optimizer
 {
 private:
+
 	Dataset& data;
 
 public:
@@ -33,4 +34,19 @@ public:
 	void svd(Matrix& U, Matrix& s, Matrix& VT);
 
 	~Optimizer();
+};
+
+class Distance
+{
+private:
+	Dataset& data;
+
+public:
+
+	Distance(Dataset& shareData);
+
+	Matrix manhattan(Matrix&& feature);
+
+	Matrix evklid(Matrix&& feature);
+
 };

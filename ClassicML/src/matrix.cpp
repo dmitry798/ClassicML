@@ -270,27 +270,8 @@ double Matrix::sum()
 	return sum_el;
 }
 
-Matrix quickSort(Matrix matrix)
+Matrix sort(Matrix matrix)
 {
-	/*if (matrix.getDim() < 1)
-		return matrix;
-
-	double pivot = matrix[int(matrix.getDim() / 2)];
-
-	Matrix left(matrix.getRows(), matrix.getCols());
-	for (int i = 0; i < matrix.getDim(); i++)
-		if (matrix[i] < pivot)
-			left[i] = matrix[i];
-
-	double middle = 0.0;
-	for (int i = 0; i < matrix.getDim(); i++)
-		if (matrix[i] == pivot)
-			middle = matrix[i];
-
-	Matrix right(matrix.getRows(), matrix.getCols());
-	for (int i = 0; i < matrix.getDim(); i++)
-		if (matrix[i] > pivot)
-			right[i] = matrix[i];*/
 
 	for (int i = 0; i < matrix.getDim(); i++)
 	{
@@ -335,33 +316,33 @@ int mode(const Matrix& col)
 	return modeValue;
 }
 
-//Matrix Matrix::unique()
-//{
-//	double* unique = new double[dim];
-//	int count_elements = 0;
-//	for (int i = 0; i < dim; i++) 
-//	{
-//		bool check = false;
-//		int j = 0;
-//		while (j < count_elements && check == false)
-//		{
-//			if (matrix[i] == unique[j])
-//			{ 
-//				check = true;
-//			}
-//			j++;
-//		}
-//		if (check == false)
-//		{ 
-//			unique[count_elements] = matrix[i]; 
-//			count_elements++;
-//		}
-//	}
-//
-//	Matrix result(unique, count_elements, 1, "unique");
-//	delete[] unique;
-//	return result;
-//}
+Matrix Matrix::unique()
+{
+	double* unique = new double[dim];
+	int count_elements = 0;
+	for (int i = 0; i < dim; i++) 
+	{
+		bool check = false;
+		int j = 0;
+		while (j < count_elements && check == false)
+		{
+			if (matrix[i] == unique[j])
+			{ 
+				check = true;
+			}
+			j++;
+		}
+		if (check == false)
+		{ 
+			unique[count_elements] = matrix[i]; 
+			count_elements++;
+		}
+	}
+
+	Matrix result(unique, count_elements, 1, "unique");
+	delete[] unique;
+	return result;
+}
 //
 //Matrix Matrix::roundMatrx()
 //{

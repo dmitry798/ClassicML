@@ -56,3 +56,5 @@ public:
 	//разделение данных из общей выборки на обучающую и валидационную
 	void split(double ratio = 0.7, bool random = true);
 };
+
+Matrix OneHotEncoder(Matrix& Z);

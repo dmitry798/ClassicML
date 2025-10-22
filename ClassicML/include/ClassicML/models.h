@@ -117,9 +117,7 @@ private:
 
 	int num_neighbors;
 
-	Matrix manhattan(Matrix&& feature);
-
-	Matrix evklid(Matrix&& feature);
+	Distance dist_method;
 
 public:
 
@@ -144,9 +142,7 @@ private:
 
 	int num_neighbors;
 
-	Matrix manhattan(Matrix&& feature);
-
-	Matrix evklid(Matrix&& feature);
+	Distance dist_method;
 
 public:
 

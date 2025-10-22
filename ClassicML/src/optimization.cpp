@@ -308,3 +308,36 @@ void Optimizer::svd(Matrix& U, Matrix& s, Matrix& VT)
 }
 
 Optimizer::~Optimizer(){}
+
+
+Distance::Distance(Dataset& shareData): data(shareData) {}
+
+Matrix Distance::manhattan(Matrix&& feature)
+{
+	Matrix result(X_train.getRows(), 1);
+	for (int i = 0; i < X_train.getRows(); i++)
+	{
+		double sum = 0.0;
+		for (int j = 0; j < X_train.getCols(); j++)
+			sum += abs(feature[j] - X_train_norm(i, j));
+		result[i] = sum;
+	}
+	return result;
+}
+
+Matrix Distance::evklid(Matrix&& feature)
+{
+	Matrix result(X_train.getRows(), 1);
+	for (int i = 0; i < X_train.getRows(); i++)
+	{
+		double sum = 0.0;
+		for (int j = 0; j < X_train.getCols(); j++)
+		{
+			double diff = 0.0;
+			diff += feature[j] - X_train_norm(i, j);
+			sum += diff * diff;
+		}
+		result[i] = sqrt(sum);
+	}
+	return result;
+}

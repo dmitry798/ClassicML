@@ -107,8 +107,8 @@ public:
 	//сумма всех элементов матрицы
 	double sum();
 
-	////все уникальные элементы матрицы
-	//Matrix unique();
+	//все уникальные элементы матрицы
+	Matrix unique();
 
 	////округление элементов матрицы
 	//Matrix roundMatrx();
@@ -145,7 +145,7 @@ private:
 
 
 //сортировка матриц
-Matrix quickSort(Matrix matrix);
+Matrix sort(Matrix matrix);
 
 //мода элементов
 int mode(const Matrix& col);
