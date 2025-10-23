@@ -155,7 +155,7 @@ Matrix OneHotEncoder(Matrix& Z)
 	return result;
 }
 
-Matrix DecoderOHT(Matrix& Z)
+Matrix DecoderOHE(Matrix& Z)
 {
 	Matrix concate(Z.getRows(), 1, "Z");
 	for (int i = 0; i < Z.getRows(); i++)

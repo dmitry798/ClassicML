@@ -59,4 +59,4 @@ public:
 
 Matrix OneHotEncoder(Matrix& Z);
 
-Matrix DecoderOHT(Matrix& Z);
+Matrix DecoderOHE(Matrix& Z);

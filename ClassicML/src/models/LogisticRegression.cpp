@@ -1,9 +1,9 @@
-﻿#include "../ClassicML/include/ClassicML/models.h"
-#include "../ClassicML/include/ClassicML/macros.h"
+﻿#include "../include/ClassicML/models.h"
+#include "../include/ClassicML/macros.h"
 
 /************************************************************************************************************************************/
 
-//методы логистической регрессии
+//методы логистической регрессии (+ многоклассовая)
 
 LogisticRegression::LogisticRegression(Dataset& shareData, string way) : Models(shareData), way(way) {}
 

@@ -32,16 +32,16 @@
     <ClCompile Include="src\preprocessor.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="LinearRegression.cpp">
+    <ClCompile Include="src\models\KnnClassifier.cpp">
       <Filter>src\models</Filter>
     </ClCompile>
-    <ClCompile Include="LogisticRegression.cpp">
+    <ClCompile Include="src\models\KnnRegression.cpp">
       <Filter>src\models</Filter>
     </ClCompile>
-    <ClCompile Include="KnnClassifier.cpp">
+    <ClCompile Include="src\models\LinearRegression.cpp">
       <Filter>src\models</Filter>
     </ClCompile>
-    <ClCompile Include="KnnRegression.cpp">
+    <ClCompile Include="src\models\LogisticRegression.cpp">
       <Filter>src\models</Filter>
     </ClCompile>
   </ItemGroup>

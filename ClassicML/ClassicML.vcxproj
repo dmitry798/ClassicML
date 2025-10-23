@@ -105,6 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,14 +129,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="KnnClassifier.cpp" />
-    <ClCompile Include="KnnRegression.cpp" />
-    <ClCompile Include="LinearRegression.cpp" />
-    <ClCompile Include="LogisticRegression.cpp" />
     <ClCompile Include="src\errors.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\matrix.cpp" />
     <ClCompile Include="src\models.cpp" />
+    <ClCompile Include="src\models\KnnClassifier.cpp" />
+    <ClCompile Include="src\models\KnnRegression.cpp" />
+    <ClCompile Include="src\models\LinearRegression.cpp" />
+    <ClCompile Include="src\models\LogisticRegression.cpp" />
     <ClCompile Include="src\optimization.cpp" />
     <ClCompile Include="src\preprocessor.cpp" />
   </ItemGroup>
