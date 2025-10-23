@@ -1,37 +1,35 @@
 ﻿#pragma once
 #include "matrix.h"
 
-namespace Data
+//сумка данных
+struct Dataset
 {
-	struct Dataset
-	{
-	public:
-		Matrix X;
-		Matrix Y;
-		Matrix W;
+public:
+	Matrix X;
+	Matrix Y;
+	Matrix W;
 
-		Matrix X_train;
-		Matrix Y_train;
-		Matrix X_test;
-		Matrix Y_test;
+	Matrix X_train;
+	Matrix Y_train;
+	Matrix X_test;
+	Matrix Y_test;
 
-		Matrix Y_pred;
+	Matrix Y_pred;
 
-		Matrix X_train_norm;
-		Matrix Y_train_norm;
-		Matrix X_test_norm;
-		Matrix Y_test_norm;
+	Matrix X_train_norm;
+	Matrix Y_train_norm;
+	Matrix X_test_norm;
+	Matrix Y_test_norm;
 
-		Matrix mean_x;
-		Matrix std_x;
-		Matrix mean_y;
-		Matrix std_y;
+	Matrix mean_x;
+	Matrix std_x;
+	Matrix mean_y;
+	Matrix std_y;
 
-		Dataset(Matrix& x, Matrix& y);
-	};
-}
+	void info();
 
-using namespace Data;
+	Dataset(Matrix& x, Matrix& y);
+};
 
 class StandartScaler
 {
@@ -42,12 +40,12 @@ private:
 	//высчитывает среднее значение и СКО, вызывает функцию norma
 	void transform(const Matrix& Z_train, const Matrix& Z_test, Matrix& Z_train_norm, Matrix& Z_test_norm, Matrix& mean_z, Matrix& std_z);
 
-	//нормализация данных
-	Matrix normalize(const Matrix& z, const Matrix& mean_z, const Matrix& std_z);
-
 public:
 
 	StandartScaler(Dataset& sharedData);
+
+	//нормализация данных
+	Matrix normalize(const Matrix& z, const Matrix& mean_z, const Matrix& std_z);
 
 	//денормализация данных для "предсказаний"
 	static Matrix denormalize(const Matrix& z, const Matrix& mean_z, const Matrix& std_z);
@@ -56,5 +54,9 @@ public:
 	void standartNormalize();
 
 	//разделение данных из общей выборки на обучающую и валидационную
-	void split(double ratio, bool random);
+	void split(double ratio = 0.7, bool random = true);
 };
+
+Matrix OneHotEncoder(Matrix& Z);
+
+Matrix DecoderOHE(Matrix& Z);

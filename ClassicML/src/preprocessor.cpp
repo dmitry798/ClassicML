@@ -1,5 +1,4 @@
-﻿#include "preprocessor.h"
-using namespace Data;
+﻿#include "../include/ClassicML/preprocessor.h"
 
 Dataset::Dataset(Matrix& x, Matrix& y) :
 	X(move(x)),
@@ -14,14 +13,23 @@ Dataset::Dataset(Matrix& x, Matrix& y) :
 	W.random();
 }
 
-#include "macros.h"
+void Dataset::info()
+{
+	Y_test.print("Y_test: ");
+	Y_pred.print("Y_predict: ");
+}
+
+/************************************************************************************************************************************/
+
+
+#include "../include/ClassicML/macros.h"
 
 StandartScaler::StandartScaler(Dataset& sharedData) : data(sharedData) {}
 
 void StandartScaler::split(double ratio, bool random)
 {
 	if (random)
-		X.random_shuffle(Y);
+		X.randomShuffle(Y);
 	int rows_train = (int)(X.getRows() * ratio);
 	int rows_test = X.getRows() - rows_train;
 
@@ -110,4 +118,51 @@ Matrix StandartScaler::denormalize(const Matrix& z, const Matrix& mean_z, const 
 		}
 	}
 	return denormalized_z;
+}
+
+
+
+Matrix OneHotEncoder(Matrix& Z)
+{
+	int total_cols = 0;
+
+	for (int i = 0; i < Z.getCols(); i++)
+	{
+		Matrix Z_slice = Z.sliceCols(i, i + 1);
+		total_cols += Z_slice.unique().getRows();
+	}
+
+	Matrix result(Z.getRows(), total_cols);
+
+	int current_col = 0;
+	for (int i = 0; i < Z.getCols(); i++)
+	{
+		Matrix Z_slice = Z.sliceCols(i, i + 1);
+		Matrix unique_vals = Z_slice.unique();
+		for (int r = 0; r < Z.getRows(); r++)
+		{
+			for (int j = 0; j < unique_vals.getRows(); j++)
+			{
+				if (Z_slice[r] == unique_vals[j])
+				{
+					result(r, current_col + j) = 1;
+				}
+			}
+		}
+		current_col += unique_vals.getRows();
+	}
+
+	return result;
+}
+
+Matrix DecoderOHE(Matrix& Z)
+{
+	Matrix concate(Z.getRows(), 1, "Z");
+	for (int i = 0; i < Z.getRows(); i++)
+	{
+		for (int j = 0; j < Z.getCols(); j++)
+			if (Z(i, j) == 1)
+				concate[i] = j + 1;
+	}
+	return concate;
 }
