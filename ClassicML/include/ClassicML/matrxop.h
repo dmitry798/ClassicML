@@ -163,7 +163,10 @@ struct MatrxDivValOp
 	//операция деления матрицы на скаляр
 	double operator[](int i) const
 	{
-		return a_[i] / b_;
+		double b = 0.0;
+		if (b_ <= 1e-6) b = 1e-6;
+		b = b_;
+		return a_[i] / b;
 	}
 
 	double operator()(int i, int j) const { return (*this)[i * getCols() + j]; }
@@ -189,7 +192,7 @@ struct MatrxDivVal2Op
 	//операция деления матрицы на скаляр
 	double operator[](int i) const
 	{
-
+		if (a_[i] <= 1e-6) a_[i] = 1e-6;
 		return b_ / a_[i];
 	}
 

@@ -53,15 +53,13 @@ Matrix KnnRegression::predict(string distance)
             {
                 double weighted_sum = 0.0;
                 double weight_total = 0.0;
+                Matrix w = 1 / distances;
 
                 for (int i = 0; i < distances.getRows(); i++)
                 {
-                    double d = distances[i];
-                    if (d == 0) d = 1e-6;
-                    double w = 1.0 / d;
 
-                    weighted_sum += sorted(i, j + 1) * w;
-                    weight_total += w;
+                    weighted_sum += sorted(i, j + 1) * w[i];
+                    weight_total += w[i];
                 }
 
                 Y_pred(t, j) = weighted_sum / weight_total;
@@ -124,15 +122,12 @@ Matrix KnnRegression::predict(Matrix& X_predict, string distance)
             {
                 double weighted_sum = 0.0;
                 double weight_total = 0.0;
+                Matrix w = 1 / distances;
 
                 for (int i = 0; i < distances.getRows(); i++)
                 {
-                    double d = distances(i, 0);
-                    if (d == 0) d = 1e-6;
-                    double w = 1.0 / d;
-
-                    weighted_sum += sorted(i, j + 1) * w;
-                    weight_total += w;
+                    weighted_sum += sorted(i, j + 1) * w[i];
+                    weight_total += w[i];
                 }
 
                 Y_pred(t, j) = weighted_sum / weight_total;

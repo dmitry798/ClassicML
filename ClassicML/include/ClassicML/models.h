@@ -6,7 +6,6 @@
 
 
 //абстрактный класс для всех моделей
-
 class Models
 {
 protected:
@@ -31,7 +30,6 @@ public:
 
 
 //модель линейной регрессии
-
 class LinearRegression: public Models
 {
 public:
@@ -55,8 +53,7 @@ public:
 };
 
 
-// модель логистической регрессии (+ многоклассовая)
-
+//модель логистической регрессии (+ многоклассовая)
 class LogisticRegression : public Models
 {
 public:
@@ -80,37 +77,10 @@ public:
 private:
 
 	string way;
-
-
-	//многоклассовая логистическая регрессия
-
-	class MultiClassLogisticRegression : public Models
-	{
-	public:
-
-		//конструктор мультиклассовой логистической регрессии
-		MultiClassLogisticRegression(Dataset& shareData);
-
-		//обучение
-		void train(const string& method, int iters = 1000, double lr = 0.01, int mini_batch = 8, double gamma = 0.01);
-
-		//тестирование
-		Matrix predict();
-
-		//прогноз
-		Matrix predict(Matrix& X_predict) override;
-
-		//ошибка
-		void loss(double threshold);
-
-		~MultiClassLogisticRegression();
-	};
-
-	MultiClassLogisticRegression model;
 };
 
 
-
+//модель Knn-классификации (+ взвешанная версия)
 class Knn : public Models
 {
 private:
@@ -138,6 +108,8 @@ public:
 	~Knn();
 };
 
+
+//модель Knn-регрессии (+ взвешанная версия)
 class KnnRegression : public Models
 {
 private:
