@@ -128,6 +128,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="KnnClassifier.cpp" />
+    <ClCompile Include="KnnRegression.cpp" />
+    <ClCompile Include="LinearRegression.cpp" />
+    <ClCompile Include="LogisticRegression.cpp" />
     <ClCompile Include="src\errors.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\matrix.cpp" />

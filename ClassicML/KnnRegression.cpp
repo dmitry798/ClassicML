@@ -1,0 +1,152 @@
+﻿#include "../ClassicML/include/ClassicML/models.h"
+#include "../ClassicML/include/ClassicML/macros.h"
+
+/************************************************************************************************************************************/
+
+//методы К ближайших соседей для регрессии
+
+KnnRegression::KnnRegression(Dataset& shareData, int num_neighbors, string weighted) : Models(shareData), num_neighbors(num_neighbors), dist_method(shareData), weighted(weighted) {}
+
+Matrix KnnRegression::predict(string distance)
+{
+    Y_pred = Matrix(X_test_norm.getRows(), Y_train.getCols());
+    //проходимся по всем тестовым точкам
+    for (int t = 0; t < X_test_norm.getRows(); t++)
+    {
+        Matrix dist;
+
+        //рассчитываем расстояние
+        if (distance == "evklid") dist = dist_method.evklid(move(X_test_norm.sliceRow(t, t + 1)));
+        else if (distance == "manhattan") dist = dist_method.manhattan(move(X_test_norm.sliceRow(t, t + 1)));
+
+        //делаем матрицу из расстояний и значений
+        Matrix concate(X_train_norm.getRows(), 1 + Y_train.getCols(), "concate-X+Y");
+        for (int i = 0; i < X_train_norm.getRows(); i++)
+        {
+            concate(i, 0) = dist[i];
+            for (int j = 0; j < Y_train.getCols(); j++)
+                concate(i, j + 1) = Y_train(i, j);
+        }
+
+        //сортируем по расстоянию
+        concate.sortRows(0);
+
+        Matrix sorted = concate.sliceRow(0, num_neighbors);
+
+        //находим среднее
+        if (weighted == "uniform")
+        {
+            for (int j = 0; j < Y_train.getCols(); j++)
+            {
+                double sum = 0.0;
+                for (int i = 0; i < num_neighbors; i++)
+                    sum += sorted(i, j + 1);
+                Y_pred(t, j) = sum / num_neighbors;
+            }
+        }
+        //наиболее весомые
+        else if (weighted == "distance")
+        {
+            Matrix distances = sorted.sliceCols(0, 1);
+
+            for (int j = 0; j < Y_train.getCols(); j++)
+            {
+                double weighted_sum = 0.0;
+                double weight_total = 0.0;
+
+                for (int i = 0; i < distances.getRows(); i++)
+                {
+                    double d = distances[i];
+                    if (d == 0) d = 1e-6;
+                    double w = 1.0 / d;
+
+                    weighted_sum += sorted(i, j + 1) * w;
+                    weight_total += w;
+                }
+
+                Y_pred(t, j) = weighted_sum / weight_total;
+            }
+        }
+    }
+    return Y_pred;
+}
+
+Matrix KnnRegression::predict(Matrix& X_predict, string distance)
+{
+    StandartScaler scaler(data);
+
+    Matrix mean(X_predict.getCols(), 1, "mean"); Matrix std(X_predict.getCols(), 1, "std");
+    mean.mean(X_predict); std.std(X_predict, mean);
+
+    Matrix&& X_predict_norm = scaler.normalize(X_predict, mean, std);
+
+
+    Y_pred = Matrix(X_predict_norm.getRows(), Y_train.getCols());
+    //проходимся по всем тестовым точкам
+    for (int t = 0; t < X_predict_norm.getRows(); t++)
+    {
+        Matrix dist;
+
+        //рассчитываем расстояние
+        if (distance == "evklid") dist = dist_method.evklid(move(X_predict_norm.sliceRow(t, t + 1)));
+        else if (distance == "manhattan") dist = dist_method.manhattan(move(X_predict_norm.sliceRow(t, t + 1)));
+
+        //делаем матрицу из расстояний и принадлежности к классу
+        Matrix concate(X_train_norm.getRows(), 1 + Y_train.getCols(), "concate-X+Y");
+        for (int i = 0; i < X_train_norm.getRows(); i++)
+        {
+            concate(i, 0) = dist[i];
+            for (int j = 0; j < Y_train.getCols(); j++)
+                concate(i, j + 1) = Y_train(i, j);
+        }
+        //сортируем по расстоянию
+        concate.sortRows(0);
+
+        Matrix sorted = concate.sliceRow(0, num_neighbors);
+
+        //находим среднее
+        if (weighted == "uniform")
+        {
+            for (int j = 0; j < Y_train.getCols(); j++)
+            {
+                double sum = 0.0;
+                for (int i = 0; i < num_neighbors; i++)
+                    sum += sorted(i, j + 1);
+                Y_pred(t, j) = sum / num_neighbors;
+            }
+        }
+        //наиболее весомые
+        else if (weighted == "distance")
+        {
+            Matrix distances = sorted.sliceCols(0, 1);
+
+            for (int j = 0; j < Y_train.getCols(); j++)
+            {
+                double weighted_sum = 0.0;
+                double weight_total = 0.0;
+
+                for (int i = 0; i < distances.getRows(); i++)
+                {
+                    double d = distances(i, 0);
+                    if (d == 0) d = 1e-6;
+                    double w = 1.0 / d;
+
+                    weighted_sum += sorted(i, j + 1) * w;
+                    weight_total += w;
+                }
+
+                Y_pred(t, j) = weighted_sum / weight_total;
+            }
+        }
+    }
+    return Y_pred;
+}
+
+void KnnRegression::loss()
+{
+    error.errorsRegression();
+}
+
+KnnRegression::~KnnRegression() {}
+
+/************************************************************************************************************************************/

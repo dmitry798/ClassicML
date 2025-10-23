@@ -238,7 +238,7 @@ Matrix Matrix::sliceRow(int start, int end)
 
 Matrix Matrix::sliceCols(int start, int end)
 {
-	if (start >= rows || end >= rows || start < 0 || end < 0 || end < start)
+	if (start >= cols || end >= cols || start < 0 || end < 0 || end < start)
 		std::out_of_range("start >= dim || end >= dim || start < 0 || end < 0 || end < start");
 
 	int new_cols = end - start;
