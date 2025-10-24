@@ -1,6 +1,10 @@
 ﻿#pragma once
 #include <cmath>
 #include "matrxop.h"
+using std::unique_ptr;
+using std::swap;
+using std::make_unique;
+using std::copy;
 
 class Matrix
 {
@@ -10,7 +14,7 @@ private:
 
 	string name;
 
-	double* matrix;
+	unique_ptr<double[]> matrix{nullptr};
 
 public:
 
@@ -31,7 +35,7 @@ public:
 
 	//конструктор копирования
 	//принимает на вход матрицу того же класса
-	Matrix(const Matrix& matrix);
+	Matrix(const Matrix& other);
 
 	//конструктор выражений
 	template<MatrxOp T>
@@ -43,7 +47,7 @@ public:
 
 	//конструктор перемещения
 	//принимает на вход r-value матрицу того же класса
-	Matrix(Matrix&& other) noexcept;
+	Matrix(Matrix&&) noexcept;
 
 	//получение кол-ва строк
 	int getRows() const;
@@ -63,10 +67,10 @@ public:
 	double& operator[] (const int i) const;
 
 	//оператор присваивания
-	Matrix& operator= (const Matrix& other) noexcept;
+	Matrix& operator= (const Matrix& other);
 
 	//оператор перемещения
-	Matrix& operator= (Matrix&& other) noexcept;
+	Matrix& operator= (Matrix&&) noexcept;
 
 	//транспонирование
 	Matrix transpose() const;
@@ -82,12 +86,6 @@ public:
 
 	//вывод матрицы
 	void print(string text = "") const;
-
-	//мат ожидание
-	Matrix& mean(const Matrix& x);
-
-	//стандартное отклонение
-	Matrix& std(const Matrix& x, const Matrix& mean);
 
 	//очистка матрицы
 	void clear();
@@ -111,7 +109,10 @@ public:
 	Matrix unique();
 
 	//сортировка по строкам с указанием по какому столбцу сортировать
-	Matrix sortRows(int t);
+	Matrix sortRows(int t) const;
+
+	//копирование матриц одного класса
+	void copyFrom(const Matrix& other);
 
 	////округление элементов матрицы
 	//Matrix roundMatrx();
@@ -130,25 +131,24 @@ private:
 	//выделение памяти
 	void allocateMemory();
 
-	//освобождение памяти
-	void freeMemory();
-
 	//копирование матрицы в класс
 	void copyData(double** matrix);
 
 	//копирование вектора в класс
 	void copyVector(double* matrix);
 
-	//копирование матриц одного класса
-	void copyFrom(const Matrix& other);
-
 	//заполнение матрицы нулями
 	void zeros();
 };
 
+//мат ожидание
+Matrix mean(const Matrix& x);
+
+//стандартное отклонение
+Matrix stddev(const Matrix& x, const Matrix& mean);
 
 //сортировка матриц
-Matrix sort(Matrix matrix);
+Matrix sort(Matrix& matrix);
 
 //мода элементов
 int mode(const Matrix& col);

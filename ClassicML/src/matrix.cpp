@@ -38,25 +38,13 @@ Matrix::Matrix(double* matrix, int rws, int cls, string nme) : matrix(nullptr), 
 	}
 }
 
-Matrix::Matrix(const Matrix& matrix): rows(matrix.rows), cols(matrix.cols), dim(matrix.dim), matrix(nullptr)
+Matrix::Matrix(const Matrix& other): rows(other.rows), cols(other.cols), dim(other.dim),matrix(other.dim ? make_unique<double[]>(other.dim) : nullptr)
 {
-	if (dim > 0)
-	{
-		allocateMemory();
-		copyFrom(matrix);
-		//cout << "Const-copy " << name << endl;
-	}
+	if (matrix)
+		copy(other.matrix.get(), other.matrix.get() + other.dim, matrix.get());
 }
 
-Matrix::Matrix(Matrix&& other) noexcept : rows(other.rows), cols(other.cols), name(other.name), dim(other.dim), matrix(other.matrix)
-{
-	other.matrix = nullptr;
-	other.rows = 0;
-	other.cols = 0;
-	other.name = "";
-	other.dim = 0;
-	//cout << "Const-move " << name << endl;
-}
+Matrix::Matrix(Matrix&&) noexcept = default;
 
 int Matrix::getRows() const { return this->rows; }
 
@@ -78,78 +66,65 @@ double& Matrix::operator[] (const int i) const
 	return matrix[i];
 }
 
-Matrix& Matrix::operator= (Matrix&& other) noexcept
+Matrix& Matrix::operator=(Matrix&& other) noexcept
 {
-	if (this != &other) {
-		freeMemory();
+	if (this != &other)
+	{
 		rows = other.rows;
 		cols = other.cols;
 		dim = other.dim;
-		name = other.name;
-		matrix = other.matrix;
+		matrix = move(other.matrix);
 
 		other.rows = 0;
 		other.cols = 0;
 		other.dim = 0;
-		other.name = "";
-		other.matrix = nullptr;
 	}
 	return *this;
 }
 
-Matrix& Matrix::operator= (const Matrix& other) noexcept
+Matrix& Matrix::operator=(const Matrix& other)
 {
 	if (this != &other)
 	{
-		if (rows != other.rows || cols != other.cols)
-		{
-			if (matrix == nullptr || other.dim > dim)
-			{
-				freeMemory();
-				rows = other.rows;
-				cols = other.cols;
-				dim = other.dim;
-				allocateMemory();
-			}
-			else
-			{
-				rows = other.rows;
-				cols = other.cols;
-				dim = other.dim;
-			}
-		}
-		copyFrom(other);
+		rows = other.rows;
+		cols = other.cols;
+		dim = other.dim;
+		matrix = (other.dim ? make_unique<double[]>(other.dim) : nullptr);
+		if (matrix)
+			copy(other.matrix.get(), other.matrix.get() + other.dim, matrix.get());
 	}
 	return *this;
 }
 
-Matrix& Matrix::mean(const Matrix& x)
+Matrix mean(const Matrix& x)
 {
-	for (int i = 0; i < x.cols; i++)
+	Matrix mean(x.getCols(), 1, "mean");
+	for (int i = 0; i < x.getCols(); i++)
 	{
 		double variance = 0;
-		for (int j = 0; j < x.rows; j++)
+		for (int j = 0; j < x.getRows(); j++)
 		{
 			variance += x(j, i);
 		}
-		matrix[i] = variance / x.rows;
+		mean[i] = variance / x.getRows();
 	}
-	return *this;
+	return mean;
 }
 
-Matrix& Matrix::std(const Matrix& x, const Matrix& mean)
+Matrix stddev(const Matrix& x, const Matrix& mean)
 {
-	for (int i = 0; i < x.cols; i++)
+	Matrix std(x.getCols(), 1, "std");
+	for (int i = 0; i < x.getCols(); i++)
 	{
 		double variance = 0;
-		for (int j = 0; j < x.rows; j++)
+		for (int j = 0; j < x.getRows(); j++)
 		{
-			double diff = x(j, i) - mean.matrix[i];
+			double diff = x(j, i) - mean[i];
 			variance += diff * diff;
 		}
-		matrix[i] = sqrt(variance / (x.rows - 1));
+		std[i] = sqrt(variance / (x.getRows() - 1));
 	}
-	return *this;
+	return std;
 }
 
 void Matrix::clear()
@@ -159,10 +134,7 @@ void Matrix::clear()
 
 void Matrix::random()
 {
-	for (int i = 0; i < dim; i++)
-	{
-		matrix[i] = (rand() % 1000 - 500) / 10000.0;;
-	}
+	for (int i = 0; i < dim; i++) matrix[i] = (rand() % 1000 - 500) / 10000.0;
 }
 
 void Matrix::randomShuffle(Matrix& other)
@@ -188,21 +160,14 @@ void Matrix::randomShuffle(Matrix& other)
 void Matrix::zeros()
 {
 	for (int i = 0; i < dim; i++)
-	{
 		matrix[i] = 0;
-	}
 }
 
 Matrix Matrix::transpose() const
 {
 	Matrix result(cols, rows, "res");
 	for (int i = 0; i < rows; i++)
-	{
-		for (int j = 0; j < cols; j++)
-		{
-			result.matrix[j * result.cols + i] = matrix[i * cols + j];
-		}
-	}
+		for (int j = 0; j < cols; j++) result.matrix[j * result.cols + i] = matrix[i * cols + j];
     return result;
 }
 
@@ -210,9 +175,7 @@ double Matrix::lenVec()
 {
 	double len = 0.0;
 	for (int i = 0; i < dim; i++)
-	{
 		len += matrix[i] * matrix[i];
-	}
 	return sqrt(len);
 
 }
@@ -226,12 +189,7 @@ Matrix Matrix::sliceRow(int start, int end)
 	Matrix result(new_rows, cols, "res_slice");
 
 	for (int i = 0; i < new_rows; i++)
-	{
-		for (int j = 0; j < cols; j++)
-		{
-			result.matrix[i * cols + j] = matrix[(i + start) * cols + j];
-		}
-	}
+		for (int j = 0; j < cols; j++) result.matrix[i * cols + j] = matrix[(i + start) * cols + j];  
 
 	return result;
 }
@@ -245,12 +203,7 @@ Matrix Matrix::sliceCols(int start, int end)
 	Matrix result(rows, new_cols, "res_slice");
 
 	for (int i = 0; i < rows; i++)
-	{
-		for (int j = 0; j < new_cols; j++)
-		{
-			result.matrix[i * new_cols + j] = matrix[i * cols + (j + start)];
-		}
-	}
+		for (int j = 0; j < new_cols; j++) result.matrix[i * new_cols + j] = matrix[i * cols + (j + start)];
 
 	return result;
 }
@@ -270,23 +223,20 @@ double Matrix::sum()
 	return sum_el;
 }
 
-Matrix sort(Matrix matrix)
+Matrix sort(Matrix& matrix)
 {
-
-	for (int i = 0; i < matrix.getDim(); i++)
-	{
-		for (int j = 0; j < matrix.getRows(); j++)
-		{
-			if (matrix[i] < matrix[j])
+	Matrix sorted(matrix.getRows(), matrix.getCols(), "sorted");
+	sorted.copyFrom(matrix);
+	for (int i = 0; i < sorted.getDim(); i++)
+		for (int j = 0; j < sorted.getRows(); j++)
+			if (sorted[i] < sorted[j])
 			{
-				double temp = matrix[i];
-				matrix[i] = matrix[j];
-				matrix[j] = temp;
+				double temp = sorted[i];
+				sorted[i] = sorted[j];
+				sorted[j] = temp;
 			}
-		}
-	}
 
-	return matrix;
+	return sorted;
 }
 
 int mode(const Matrix& col)
@@ -301,10 +251,8 @@ int mode(const Matrix& col)
 		double current = col[i];
 
 		for (int j = 0; j < n; j++)
-		{
 			if (col[j] == current)
 				count++;
-		}
 
 		if (count > maxCount)
 		{
@@ -318,7 +266,7 @@ int mode(const Matrix& col)
 
 Matrix Matrix::unique()
 {
-	double* unique = new double[dim];
+	unique_ptr<double[]> unique = make_unique<double[]>(dim);
 	int count_elements = 0;
 	for (int i = 0; i < dim; i++) 
 	{
@@ -326,10 +274,7 @@ Matrix Matrix::unique()
 		int j = 0;
 		while (j < count_elements && check == false)
 		{
-			if (matrix[i] == unique[j])
-			{ 
-				check = true;
-			}
+			if (matrix[i] == unique[j]) check = true;
 			j++;
 		}
 		if (check == false)
@@ -339,11 +284,10 @@ Matrix Matrix::unique()
 		}
 	}
 
-	Matrix result(unique, count_elements, 1, "unique");
-	delete[] unique;
+	Matrix result(unique.get(), count_elements, 1, "unique");
 	return result;
 }
-Matrix Matrix::sortRows(int t)
+Matrix Matrix::sortRows(int t) const
 {
 	for (int i = 0; i < this->getRows() - 1; i++)
 	{
@@ -395,23 +339,7 @@ Matrix Matrix::sortRows(int t)
 
 void Matrix::allocateMemory()
 {
-	if (matrix == nullptr && dim > 0)
-	{
-		matrix = new double[dim];
-	}
-}
-
-void Matrix::freeMemory()
-{
-	if (matrix != nullptr)
-	{
-		delete[] matrix;
-		matrix = nullptr;
-	}
-	rows = 0;
-	cols = 0;
-	dim = 0;
-	name = "";
+	if (dim > 0) matrix = make_unique<double[]>(dim);
 }
 
 void Matrix::copyFrom(const Matrix& other)
@@ -428,26 +356,14 @@ void Matrix::copyFrom(const Matrix& other)
 void Matrix::copyData(double** matrix)
 {
 	if (dim > 0)
-	{
-		for (int i = 0; i < rows; i++)
-		{
-			for (int j = 0; j < cols; j++)
-			{
-				this->matrix[i * cols + j] = matrix[i][j];
-			}
-		}
-	}
+		for (int i = 0; i < rows; i++) 
+			for (int j = 0; j < cols; j++) 
+				this->matrix[i * cols + j] = matrix[i][j];  
 }
 
 void Matrix::copyVector(double* matrix)
 {
-	if (dim > 0)
-	{
-		for (int i = 0; i < dim; i++)
-		{
-			this->matrix[i] = matrix[i];
-		}
-	}
+	if (dim > 0) for (int i = 0; i < dim; i++) this->matrix[i] = matrix[i]; 
 }
 
 void Matrix::print(string text) const
@@ -456,22 +372,15 @@ void Matrix::print(string text) const
 	for (int i = 0; i < dim; i++)
 	{
 		cout << matrix[i] << " ";
-		if((i + 1) % cols == 0)
-			cout << endl;
+		if((i + 1) % cols == 0) cout << endl;
 	}
 	cout << endl;
 }
 
 void Matrix::reshape() const
 {
-	if (dim > 0)
-		cout << "(" << rows << "x" << cols << ")" << endl;
+	if (dim > 0) cout << "(" << rows << "x" << cols << ")" << endl;
 }
 
-Matrix::~Matrix()
-{
-	if (matrix != nullptr)
-		//cout << "deConst " << name << endl;
-		freeMemory();
-}
+Matrix::~Matrix(){}
 

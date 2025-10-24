@@ -33,7 +33,7 @@ double Errors::R2() const
     for (int i = 0; i < residuals.getDim(); i++)
         sum_sq_errors += residuals[i] * residuals[i];
 
-    mean_y.mean(Y_test);
+    mean_y = mean(Y_test);
 
     double sum_sq_total = 0.0;
     for (int i = 0; i < Y_test.getCols(); i++)

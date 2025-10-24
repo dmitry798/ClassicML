@@ -71,12 +71,12 @@ Matrix KnnRegression::predict(string distance)
 
 Matrix KnnRegression::predict(Matrix& X_predict, string distance)
 {
-    StandartScaler scaler(data);
+    StandardScaler scaler(data);
 
-    Matrix mean(X_predict.getCols(), 1, "mean"); Matrix std(X_predict.getCols(), 1, "std");
-    mean.mean(X_predict); std.std(X_predict, mean);
+    Matrix mean_(X_predict.getCols(), 1, "mean"); Matrix std_(X_predict.getCols(), 1, "std");
+    mean_ = mean(X_predict); std_ = stddev(X_predict, mean_);
 
-    Matrix&& X_predict_norm = scaler.normalize(X_predict, mean, std);
+    Matrix&& X_predict_norm = scaler.normalize(X_predict, mean_, std_);
 
 
     Y_pred = Matrix(X_predict_norm.getRows(), Y_train.getCols());

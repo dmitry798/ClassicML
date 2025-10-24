@@ -62,7 +62,7 @@ Matrix Knn::predict(string distance)
                 if (weight_sum > max_weight_sum)
                 {
                     max_weight_sum = weight_sum;
-                    best_class = cls;
+                    best_class = int(cls);
                 }
             }
 
@@ -75,12 +75,12 @@ Matrix Knn::predict(string distance)
 
 Matrix Knn::predict(Matrix& X_predict, string distance)
 {
-    StandartScaler scaler(data);
+    StandardScaler scaler(data);
 
-    Matrix mean(X_predict.getCols(), 1, "mean"); Matrix std(X_predict.getCols(), 1, "std");
-    mean.mean(X_predict); std.std(X_predict, mean);
+    Matrix mean_(X_predict.getCols(), 1, "mean"); Matrix std_(X_predict.getCols(), 1, "std");
+    mean_ = mean(X_predict); std_ = stddev(X_predict, mean_);
 
-    Matrix&& X_predict_norm = scaler.normalize(X_predict, mean, std);
+    Matrix&& X_predict_norm = scaler.normalize(X_predict, mean_, std_);
 
 
     Y_pred = Matrix(X_predict_norm.getRows(), 1);
@@ -137,7 +137,7 @@ Matrix Knn::predict(Matrix& X_predict, string distance)
                 if (weight_sum > max_weight_sum)
                 {
                     max_weight_sum = weight_sum;
-                    best_class = cls;
+                    best_class = int(cls);
                 }
             }
 
@@ -150,7 +150,7 @@ Matrix Knn::predict(Matrix& X_predict, string distance)
 
 void Knn::loss(double threshold)
 {
-    Y_test = DecoderOHT(Y_test);
+    Y_test = DecoderOHE(Y_test);
     error.errorsKnnClassifier();
 }
 

@@ -24,9 +24,9 @@ void Dataset::info()
 
 #include "../include/ClassicML/macros.h"
 
-StandartScaler::StandartScaler(Dataset& sharedData) : data(sharedData) {}
+StandardScaler::StandardScaler(Dataset& sharedData) : data(sharedData) {}
 
-void StandartScaler::split(double ratio, bool random)
+void StandardScaler::split(double ratio, bool random)
 {
 	if (random)
 		X.randomShuffle(Y);
@@ -68,16 +68,16 @@ void StandartScaler::split(double ratio, bool random)
 	}
 }
 
-void StandartScaler::standartNormalize()
+void StandardScaler::standartNormalize()
 {
 	transform(X_train, X_test, X_train_norm, X_test_norm, mean_x, std_x);
 	transform(Y_train, Y_test, Y_train_norm, Y_test_norm, mean_y, std_y);
 }
 
-void StandartScaler::transform(const Matrix& Z_train, const Matrix& Z_test, Matrix& Z_train_norm, Matrix& Z_test_norm, Matrix& mean_z, Matrix& std_z)
+void StandardScaler::transform(const Matrix& Z_train, const Matrix& Z_test, Matrix& Z_train_norm, Matrix& Z_test_norm, Matrix& mean_z, Matrix& std_z)
 {
-	mean_z.mean(Z_train);
-	std_z.std(Z_train, mean_z);
+	mean_z = mean(Z_train);
+	std_z = stddev(Z_train, mean_z);
 
 	Z_train_norm = Matrix(Z_train.getRows(), Z_train.getCols(), "train_norm");
 	Z_train_norm = normalize(Z_train, mean_z, std_z);
@@ -86,7 +86,7 @@ void StandartScaler::transform(const Matrix& Z_train, const Matrix& Z_test, Matr
 	Z_test_norm = normalize(Z_test, mean_z, std_z);
 }
 
-Matrix StandartScaler::normalize(const Matrix& z, const Matrix& mean_z, const Matrix& std_z)
+Matrix StandardScaler::normalize(const Matrix& z, const Matrix& mean_z, const Matrix& std_z)
 {
 	Matrix normalized_z = z;
 	int cols = z.getCols();
@@ -103,7 +103,7 @@ Matrix StandartScaler::normalize(const Matrix& z, const Matrix& mean_z, const Ma
 	return normalized_z;
 }
 
-Matrix StandartScaler::denormalize(const Matrix& z, const Matrix& mean_z, const Matrix& std_z)
+Matrix StandardScaler::denormalize(const Matrix& z, const Matrix& mean_z, const Matrix& std_z)
 {
 	Matrix denormalized_z = z;
 	int cols = z.getCols();
