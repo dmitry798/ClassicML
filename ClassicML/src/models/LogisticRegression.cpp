@@ -15,15 +15,15 @@ void LogisticRegression::train(const string& method, int iters, double lr, int m
 
 Matrix LogisticRegression::predict()
 {
-    if (way == "binary") Y_pred = sigmoid(X_test_norm * W);
-    else if (way == "multi") Y_pred = softMax(X_test_norm * W);
+    if (way == "binary") Y_pred = eval(sigmoid(X_test_norm * W));
+    else if (way == "multi") Y_pred = eval(softMax(X_test_norm * W));
     return Y_pred;
 }
 
 Matrix LogisticRegression::predict(Matrix& X_predict)
 {
-    if (way == "binary") Y_pred = sigmoid(Models::predict(X_predict));
-    else if (way == "multi") Y_pred = softMax(Models::predict(X_predict));
+    if (way == "binary") Y_pred = eval(sigmoid(Models::predict(X_predict)));
+    else if (way == "multi") Y_pred = eval(softMax(Models::predict(X_predict)));
     return Y_pred;
 }
 

@@ -162,7 +162,10 @@ Matrix DecoderOHE(Matrix& Z)
 	{
 		for (int j = 0; j < Z.getCols(); j++)
 			if (Z(i, j) == 1)
-				concate[i] = j + 1;
+			{
+				concate[i] = j;
+				break;
+			}
 	}
 	return concate;
 }

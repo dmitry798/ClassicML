@@ -1,12 +1,11 @@
 ﻿#include "../include/ClassicML/errors.h"
 #include <cmath>
-#include "../include/ClassicML/macros.h"
 
 Errors::Errors(Dataset& data): data(data) {}
 
 double Errors::MSE() const
 {
-	Matrix er = Y_pred - Y_test;
+	Matrix er = data.Y_pred - data.Y_test;
 	er = er.transpose() * er / er.getDim();
 	return er[0];
 }
@@ -18,7 +17,7 @@ double Errors::RMSE() const
 
 double Errors::MAE() const
 {
-	Matrix er = Y_pred - Y_test;
+	Matrix er = data.Y_pred - data.Y_test;
 	double sum = 0.0;
 	for (int i = 0; i < er.getDim(); i++) 
 		sum += abs(er[i]);
@@ -27,20 +26,20 @@ double Errors::MAE() const
 
 double Errors::R2() const
 {
-    Matrix residuals = Y_test - Y_pred;
+    Matrix residuals = data.Y_test - data.Y_pred;
 
     double sum_sq_errors = 0.0;
     for (int i = 0; i < residuals.getDim(); i++)
         sum_sq_errors += residuals[i] * residuals[i];
 
-    mean_y = mean(Y_test);
+    data.mean_y = mean(data.Y_test);
 
     double sum_sq_total = 0.0;
-    for (int i = 0; i < Y_test.getCols(); i++)
+    for (int i = 0; i < data.Y_test.getCols(); i++)
     {
-        for (int j = 0; j < Y_test.getRows(); j++)
+        for (int j = 0; j < data.Y_test.getRows(); j++)
         {
-            double diff = Y_test(j, i) - mean_y[i];
+            double diff = data.Y_test(j, i) - data.mean_y[i];
             sum_sq_total += diff * diff;
         }
     }
@@ -62,8 +61,8 @@ double Errors::logLoss() const
 {
     //          logloss = -1/n * sum(y_i * log(p_i) + (1-y_i)*log(1-p_i)) -> min
     double eps = 1e-15;
-    double logloss = (-1.0 / Y_train.getRows()) * (Matrix((Y_train & Matrix(sigmoid(X_train_norm * W) + eps).logMatrx()) +
-        ((1.0 - Y_train) & Matrix(1.0 - sigmoid(X_train_norm * W) + eps).logMatrx()))).sum();
+    double logloss = (-1.0 / data.Y_train.getRows()) * (Matrix((data.Y_train & Matrix(sigmoid(data.X_train_norm * data.W) + eps).logMatrx()) +
+        ((1.0 - data.Y_train) & Matrix(1.0 - sigmoid(data.X_train_norm * data.W) + eps).logMatrx()))).sum();
 
     return logloss;
 }
@@ -72,18 +71,18 @@ double Errors::logLossMulti() const
 {
     //          logloss = -1/n * sum(sum(y_i * log(p_i)))
     double eps = 1e-15;
-    double logloss = (-1.0 / Y_train.getRows()) * Matrix(Y_train & Matrix(softMax(X_train_norm * W) + eps).logMatrx()).sum();
+    double logloss = (-1.0 / data.Y_train.getRows()) * Matrix(data.Y_train & Matrix(softMax(data.X_train_norm * data.W) + eps).logMatrx()).sum();
     return logloss;
 }
 
 double Errors::accuracy(double threshold) const
 {
-    double true_answer = Y_pred.getRows();
+    double true_answer = data.Y_pred.getRows();
     double pred_answer = 0.0;
 
-    for (int i = 0; i < Y_pred.getDim(); i++)
+    for (int i = 0; i < data.Y_pred.getDim(); i++)
     {
-        if (Y_pred[i] >= threshold && Y_test[i] == 1) 
+        if (data.Y_pred[i] >= threshold && data.Y_test[i] == 1)
             pred_answer++;
     }
     return pred_answer / true_answer;
@@ -91,12 +90,12 @@ double Errors::accuracy(double threshold) const
 
 double Errors::accuracyMultiClss() const
 {
-    double true_answer = Y_pred.getRows();
+    double true_answer = data.Y_pred.getRows();
     double pred_answer = 0.0;
 
-    for (int i = 0; i < Y_pred.getDim(); i++)
+    for (int i = 0; i < data.Y_pred.getDim(); i++)
     {
-        if (Y_pred[i] == Y_test[i])
+        if (data.Y_pred[i] == data.Y_test[i])
             pred_answer++;
     }
     return pred_answer / true_answer;
@@ -107,10 +106,10 @@ double Errors::precision(double threshold) const
     int tp = 0;
     int fp = 0;
 
-    for (int i = 0; i < Y_pred.getDim(); i++)
+    for (int i = 0; i < data.Y_pred.getDim(); i++)
     {
-        if (Y_pred[i] >= threshold && Y_test[i] == 1) tp++;
-        else if (Y_pred[i] >= threshold && Y_test[i] == 0 ) fp++;
+        if (data.Y_pred[i] >= threshold && data.Y_test[i] == 1) tp++;
+        else if (data.Y_pred[i] >= threshold && data.Y_test[i] == 0 ) fp++;
     }
     if (tp + fp > 0) return static_cast<double>(tp) / static_cast<double>(tp + fp);
     else return 0;
@@ -121,10 +120,10 @@ double Errors::recall(double threshold) const
     int tp = 0;
     int fn = 0;
 
-    for (int i = 0; i < Y_pred.getDim(); i++)
+    for (int i = 0; i < data.Y_pred.getDim(); i++)
     {
-        if (Y_pred[i] >= threshold && Y_test[i] == 1) tp++;
-        else if (Y_pred[i] < threshold && Y_test[i] == 1) fn++;
+        if (data.Y_pred[i] >= threshold && data.Y_test[i] == 1) tp++;
+        else if (data.Y_pred[i] < threshold && data.Y_test[i] == 1) fn++;
     }
     if (tp + fn > 0) return static_cast<double>(tp) / static_cast<double>(tp + fn);
     else return 0;

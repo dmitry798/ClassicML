@@ -90,12 +90,11 @@ int main()
 	// Предобработка
 	Dataset data(X, Y);
 	StandardScaler scaler(data);
-	scaler.split();
+	scaler.split(0.7);
     scaler.standartNormalize();
 
 	// Создаем и обучаем модель
-	LogisticRegression model(data, "binary");
-	model.train("gd", 1000, 0.01);
+	Knn model(data, 4, "distance");
 	model.predict();
 	model.loss(0.8);
 	data.info();

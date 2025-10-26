@@ -266,27 +266,33 @@ int mode(const Matrix& col)
 
 Matrix Matrix::unique()
 {
-	unique_ptr<double[]> unique = make_unique<double[]>(dim);
+	Matrix result(dim, 1, "unique");
 	int count_elements = 0;
-	for (int i = 0; i < dim; i++) 
+
+	for (int i = 0; i < dim; i++)
 	{
 		bool check = false;
 		int j = 0;
 		while (j < count_elements && check == false)
 		{
-			if (matrix[i] == unique[j]) check = true;
+			if (matrix[i] == result[j]) check = true;
 			j++;
 		}
 		if (check == false)
-		{ 
-			unique[count_elements] = matrix[i]; 
+		{
+			result[count_elements] = matrix[i];
 			count_elements++;
 		}
 	}
 
-	Matrix result(unique.get(), count_elements, 1, "unique");
-	return result;
+	// уменьшаем размер результата
+	Matrix trimmed(count_elements, 1, "unique_trimmed");
+	for (int i = 0; i < count_elements; i++)
+		trimmed[i] = result[i];
+
+	return trimmed;
 }
+
 Matrix Matrix::sortRows(int t) const
 {
 	for (int i = 0; i < this->getRows() - 1; i++)

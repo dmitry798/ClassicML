@@ -1,0 +1,3 @@
+C:/Users/dima2/source/repos/ClassicML/ClassicML/vcpkg-master/CMakeFiles/classicml.dir
+C:/Users/dima2/source/repos/ClassicML/ClassicML/vcpkg-master/CMakeFiles/ALL_BUILD.dir
+C:/Users/dima2/source/repos/ClassicML/ClassicML/vcpkg-master/CMakeFiles/ZERO_CHECK.dir

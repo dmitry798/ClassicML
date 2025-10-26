@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="bindings.cpp" />
     <ClCompile Include="src\errors.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\matrix.cpp" />
@@ -143,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="include\ClassicML.h" />
     <ClInclude Include="include\ClassicML\errors.h" />
+    <ClInclude Include="include\ClassicML\expr.h" />
     <ClInclude Include="include\ClassicML\macros.h" />
     <ClInclude Include="include\ClassicML\matrix.h" />
     <ClInclude Include="include\ClassicML\matrxop.h" />

@@ -44,6 +44,9 @@
     <ClCompile Include="src\models\LogisticRegression.cpp">
       <Filter>src\models</Filter>
     </ClCompile>
+    <ClCompile Include="bindings.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\ClassicML.h">
@@ -68,6 +71,9 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\ClassicML\macros.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ClassicML\expr.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

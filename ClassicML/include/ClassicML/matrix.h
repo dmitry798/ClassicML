@@ -152,3 +152,15 @@ Matrix sort(Matrix& matrix);
 
 //мода элементов
 int mode(const Matrix& col);
+
+
+
+
+template<typename Op>
+Matrix eval(const Op& op)
+{
+	Matrix result(op.getRows(), op.getCols());
+	for (int i = 0; i < result.getDim(); ++i)
+		result[i] = op[i];
+	return result;
+}

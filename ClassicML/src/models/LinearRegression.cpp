@@ -20,7 +20,7 @@ void LinearRegression::train(const string& method, int iters, double lr, int min
 Matrix LinearRegression::predict()
 {
     StandardScaler scaler(data);
-    Y_pred = scaler.denormalize(X_test_norm * W, mean_y, std_y);
+    Y_pred = eval(scaler.denormalize(X_test_norm * W, mean_y, std_y));
     return Y_pred;
 }
 

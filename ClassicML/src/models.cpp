@@ -32,5 +32,5 @@ Matrix Models::predict(Matrix& X_predict)
 
     Matrix&& X_predict_norm = scaler.normalize(X_predict, mean_, std_);
 
-    return X_predict_norm * W;
+    return eval(X_predict_norm * W);
 }
