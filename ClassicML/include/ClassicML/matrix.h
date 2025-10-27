@@ -6,6 +6,49 @@ using std::swap;
 using std::make_unique;
 using std::copy;
 
+#include <type_traits>
+#include <utility>
+
+// has getRows()
+template<typename T>
+struct has_getRows {
+	template<typename U> static auto test(int) -> decltype(std::declval<const U&>().getRows(), std::true_type{});
+	template<typename>  static auto test(...) -> std::false_type;
+	static constexpr bool value = decltype(test<T>(0))::value;
+};
+
+// has getCols()
+template<typename T>
+struct has_getCols {
+	template<typename U> static auto test(int) -> decltype(std::declval<const U&>().getCols(), std::true_type{});
+	template<typename>  static auto test(...) -> std::false_type;
+	static constexpr bool value = decltype(test<T>(0))::value;
+};
+
+// has getDim()
+template<typename T>
+struct has_getDim {
+	template<typename U> static auto test(int) -> decltype(std::declval<const U&>().getDim(), std::true_type{});
+	template<typename>  static auto test(...) -> std::false_type;
+	static constexpr bool value = decltype(test<T>(0))::value;
+};
+
+// has operator[](int)
+template<typename T>
+struct has_brackets_index {
+	template<typename U> static auto test(int) -> decltype(std::declval<const U&>()[0], std::true_type{});
+	template<typename>  static auto test(...) -> std::false_type;
+	static constexpr bool value = decltype(test<T>(0))::value;
+};
+
+// has operator()(int,int)
+template<typename T>
+struct has_paren_ij {
+	template<typename U> static auto test(int) -> decltype(std::declval<const U&>()(0, 0), std::true_type{});
+	template<typename>  static auto test(...) -> std::false_type;
+	static constexpr bool value = decltype(test<T>(0))::value;
+};
+
 class Matrix
 {
 private:
@@ -38,11 +81,18 @@ public:
 	Matrix(const Matrix& other);
 
 	//конструктор выражений
-	template<MatrxOp T>
-	Matrix(const T& init) : matrix(nullptr), rows(init.getRows()), cols(init.getCols()), dim(init.getDim())
+	template<typename T,
+		typename std::enable_if<
+		has_getRows<T>::value&&
+		has_getCols<T>::value&&
+		has_getDim<T>::value&&
+		has_brackets_index<T>::value, int>::type = 0>
+	Matrix(const T& init)
+		: matrix(nullptr), rows(init.getRows()), cols(init.getCols()), dim(init.getDim())
 	{
 		allocateMemory();
-		for (int i = 0; i < dim; i++) this->matrix[i] = init[i];
+		for (int i = 0; i < dim; ++i)
+			this->matrix[i] = init[i];
 	}
 
 	//конструктор перемещения
@@ -57,6 +107,8 @@ public:
 
 	//получение размерности
 	int getDim() const;
+
+	double* getData() const;
 
 	//оператор ()
 	//принимает на вход i строку и j столбец
@@ -126,6 +178,9 @@ public:
 	//деструктор
 	~Matrix();
 
+	//заполнение матрицы нулями
+	void zeros();
+
 private:
 	
 	//выделение памяти
@@ -136,9 +191,6 @@ private:
 
 	//копирование вектора в класс
 	void copyVector(double* matrix);
-
-	//заполнение матрицы нулями
-	void zeros();
 };
 
 //мат ожидание
@@ -152,15 +204,3 @@ Matrix sort(Matrix& matrix);
 
 //мода элементов
 int mode(const Matrix& col);
-
-
-
-
-template<typename Op>
-Matrix eval(const Op& op)
-{
-	Matrix result(op.getRows(), op.getCols());
-	for (int i = 0; i < result.getDim(); ++i)
-		result[i] = op[i];
-	return result;
-}

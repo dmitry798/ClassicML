@@ -1,5 +1,6 @@
 ﻿#include "../include/ClassicML/matrix.h"
 #include "ctime"
+#include "../include/ClassicML/expr.h"
 
 //реализовать исключения!!!
 
@@ -52,6 +53,10 @@ int Matrix::getCols() const { return this->cols; }
 
 int Matrix::getDim() const { return this->dim; }
 
+double* Matrix::getData() const 
+{
+	return matrix.get();
+}
 double& Matrix::operator() (int i, int j) const
 {
 	if (i >= rows || j >= cols || i < 0 || j < 0)

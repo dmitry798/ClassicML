@@ -1,58 +1,55 @@
 cmake_minimum_required(VERSION 3.15)
-project(classicml LANGUAGES CXX)
+project(ClassicML VERSION 1.0.0 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-if(MSVC)
-  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-  add_compile_definitions(_USE_MATH_DEFINES _CRT_SECURE_NO_WARNINGS)
-  add_compile_options(/W0)
+# Find Python and pybind11
+find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
+find_package(pybind11 CONFIG QUIET)
+
+if(NOT pybind11_FOUND)
+    message(STATUS "pybind11 not found, fetching from GitHub...")
+    include(FetchContent)
+    FetchContent_Declare(
+        pybind11
+        GIT_REPOSITORY https://github.com/pybind/pybind11.git
+        GIT_TAG v2.11.1
+    )
+    FetchContent_MakeAvailable(pybind11)
 endif()
 
-# Найти Python и dev-заголовки (Python.h)
-find_package(Python COMPONENTS Interpreter Development REQUIRED)
+# Include directories
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-# pybind11 и его CMake-хелперы
-set(PYBIND11_FINDPYTHON ON)
-find_package(pybind11 CONFIG REQUIRED)
+# Source files
+set(CLASSICML_SOURCES
+    src/matrix.cpp
+    src/preprocessor.cpp
+    src/errors.cpp
+    src/optimization.cpp
+    src/models.cpp
+    src/LinearRegression.cpp
+    src/LogisticRegression.cpp
+    src/KnnClassifier.cpp
+    src/KnnRegression.cpp
+)
+# Create Python module
+pybind11_add_module(_classicml bindings/bindings.cpp ${CLASSICML_SOURCES})
 
-# Ваша статическая библиотека
-add_library(classicml_lib STATIC
-  src/matrix.cpp
-  src/optimization.cpp
-  src/preprocessor.cpp
-  src/models.cpp
-  src/errors.cpp
-  src/models/LogisticRegression.cpp
-  src/models/KnnClassifier.cpp
-  src/models/KnnRegression.cpp
-  src/models/LinearRegression.cpp
+# Link math library on Unix
+if(UNIX AND NOT APPLE)
+    target_link_libraries(_classicml PRIVATE m)
+endif()
+
+# Set output directory
+set_target_properties(_classicml PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/classicml
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/classicml
 )
 
-target_include_directories(classicml_lib PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
-
-# (Опционально) Принудительное подключение expr.h только в реализации
-if(MSVC)
-  target_compile_options(classicml_lib PRIVATE /FI"ClassicML/expr.h")
-else()
-  target_compile_options(classicml_lib PRIVATE -include ClassicML/expr.h)
-endif()
-
-# Python extension-модуль
-pybind11_add_module(classicml bindings.cpp)
-target_compile_definitions(classicml PRIVATE CLASSICML_PYBINDINGS)
-
-# Слинковать с вашей библиотекой и Python
-target_link_libraries(classicml PRIVATE classicml_lib Python::Python)
-
-if(WIN32)
-  set_target_properties(classicml PROPERTIES
-    PREFIX ""
-    SUFFIX ".pyd"
-    OUTPUT_NAME "classicml"
-  )
-endif()
+# Installation
+install(TARGETS _classicml 
+        LIBRARY DESTINATION classicml
+        RUNTIME DESTINATION classicml)
