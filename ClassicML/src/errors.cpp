@@ -163,3 +163,26 @@ void Errors::errorsKnnClassifier() const
         << endl;
 }
 
+double Errors::inertia(Matrix centroids) const
+{
+    double total_inertia = 0.0;
+
+    for (int i = 0; i < data.X_train_norm.getRows(); i++)
+    {
+        Matrix point = data.X_train_norm.sliceRow(i, i + 1);
+        int cluster = static_cast<int>(data.Y_pred[i]);
+
+        Matrix centroid = centroids.sliceRow(cluster, cluster + 1);
+        Matrix diff = centroid - point;
+
+        double distance_sq = 0.0;
+        for (int j = 0; j < diff.getCols(); j++)
+        {
+            distance_sq += diff[j] * diff[j];
+        }
+
+        total_inertia += distance_sq;
+    }
+
+    return total_inertia;
+}

@@ -30,10 +30,11 @@ set(CLASSICML_SOURCES
     src/errors.cpp
     src/optimization.cpp
     src/models.cpp
-    src/LinearRegression.cpp
-    src/LogisticRegression.cpp
-    src/KnnClassifier.cpp
-    src/KnnRegression.cpp
+    src/models/LinearRegression.cpp
+    src/models/LogisticRegression.cpp
+    src/models/KnnClassifier.cpp
+    src/models/KnnRegression.cpp
+    src/models/KMeans.cpp
 )
 # Create Python module
 pybind11_add_module(_classicml bindings/bindings.cpp ${CLASSICML_SOURCES})

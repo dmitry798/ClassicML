@@ -34,3 +34,4 @@ Matrix Models::predict(Matrix& X_predict)
 
     return X_predict_norm * W;
 }
+

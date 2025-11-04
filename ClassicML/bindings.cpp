@@ -471,6 +471,46 @@ PYBIND11_MODULE(_classicml, m) {
 
         .def("loss", &KnnRegression::loss,
             "Calculate and print regression metrics (MSE, RMSE, MAE, R²)");
+    // ========== K-MEANS CLUSTERING ==========
+    py::class_<KMeans, Models>(m, "KMeans")
+        .def(py::init<Dataset&, int, int>(),
+            py::arg("data"),
+            py::arg("k") = 3,
+            py::arg("max_iters") = 100,
+            "Create K-Means clustering model\n\n"
+            "Parameters:\n"
+            "  data: Dataset object containing training data\n"
+            "  k: Number of clusters (default: 3)\n"
+            "  max_iters: Maximum number of iterations (default: 100)")
+
+        .def("train", &KMeans::train,
+            py::arg("method") = "base",
+            py::arg("rho") = "evklid",
+            "Train K-Means clustering model\n\n"
+            "Parameters:\n"
+            "  method: Initialization method - 'base' or 'pp' (K-Means++) (default: 'base')\n"
+            "  rho: Distance metric - 'evklid' or 'manhattan' (default: 'evklid')")
+
+        .def("predict", [](KMeans& km, Matrix& X, std::string rho) {
+        return km.predict(X, rho);
+            }, py::arg("X"), py::arg("rho") = "evklid",
+                "Predict clusters on new data\n\n"
+                "Parameters:\n"
+                "  X: Feature matrix\n"
+                "  rho: Distance metric - 'evklid' or 'manhattan' (default: 'evklid')\n"
+                "Returns:\n"
+                "  Cluster labels")
+
+        .def("get_centroids", &KMeans::getCentroids,
+            "Get cluster centroids\n\n"
+            "Returns:\n"
+            "  Matrix of centroids (k x n_features)")
+
+        .def("loss", &KMeans::loss,
+            "Calculate and print clustering metrics (Inertia)")
+
+        .def_property_readonly("centroids", &KMeans::getCentroids,
+            "Cluster centroids (read-only property)");
 
     // ========== EXCEPTION HANDLING ==========
     py::register_exception_translator([](std::exception_ptr p) {

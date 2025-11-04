@@ -379,13 +379,13 @@ void Matrix::copyVector(double* matrix)
 
 void Matrix::print(string text) const
 {
-	cout << text << endl;
+	cout << text << endl << "[";
 	for (int i = 0; i < dim; i++)
 	{
-		cout << matrix[i] << " ";
-		if((i + 1) % cols == 0) cout << endl;
+		cout << matrix[i] << ", ";
+		if((i + 1) % (cols + 8) == 0) cout << endl;
 	}
-	cout << endl;
+	cout << "]" << endl;
 }
 
 void Matrix::reshape() const
@@ -395,3 +395,28 @@ void Matrix::reshape() const
 
 Matrix::~Matrix(){}
 
+int max_idx(const Matrix& x)
+{
+	double max_val = x[0];
+	int res = 0;
+	for (int i = 1; i < x.getDim(); i++)
+		if (x[i] > max_val)
+		{
+			max_val = x[i];
+			res = i;
+		}
+	return res;
+}
+
+int min_idx(const Matrix& x)
+{
+	double min_val = x[0];
+	int res = 0;
+	for (int i = 1; i < x.getDim(); i++)
+		if (x[i] < min_val)
+		{
+			min_val = x[i];
+			res = i;
+		}
+	return res;
+}

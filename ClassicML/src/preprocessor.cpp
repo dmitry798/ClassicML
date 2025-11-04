@@ -13,6 +13,18 @@ Dataset::Dataset(Matrix& x, Matrix& y) :
 	W.random();
 }
 
+Dataset::Dataset(Matrix& x) :
+	X(move(x)),
+	mean_x(X.getCols(), 1, "mean_x"),
+	std_x(X.getCols(), 1, "std_x"),
+	mean_y(Y.getCols(), 1, "mean_y"),
+	std_y(Y.getCols(), 1, "std_y"),
+	W(X.getCols(), Y.getCols(), "W")
+{
+	srand(time(NULL));
+	W.random();
+}
+
 void Dataset::info()
 {
 	Y_test.print("Y_test: ");

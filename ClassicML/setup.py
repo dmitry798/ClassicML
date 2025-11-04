@@ -15,6 +15,7 @@ sources = [
     "src/models/LogisticRegression.cpp",
     "src/models/KnnClassifier.cpp",
     "src/models/KnnRegression.cpp",
+    "src/models/KMeans.cpp",
 ]
 
 # Дополнительные флаги для компилятора

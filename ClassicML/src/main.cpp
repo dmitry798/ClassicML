@@ -66,7 +66,7 @@ int main()
 	{1.0, 65.0, 95.0, 4.0}, {1.0, 70.0, 100.0, 5.0}, {1.0, 25.0, 55.0, 3.0}, {1.0, 30.0, 60.0, 2.0},
 	{1.0, 35.0, 65.0, 1.0}, {1.0, 40.0, 70.0, 2.0}, {1.0, 45.0, 75.0, 3.0}, {1.0, 50.0, 80.0, 4.0}
 	};
-	int train_rows_y = 40;
+	/*int train_rows_y = 40;
 	int train_cols_y = 3;
 	double yy[][3] = {
 	{100.0, 4.5, 18.0}, {102.0, 4.7, 19.0}, {105.0, 4.8, 20.0}, {107.0, 4.9, 19.5},
@@ -79,30 +79,30 @@ int main()
 	{120.0, 5.4, 23.0}, {125.0, 5.6, 24.0}, {130.0, 5.8, 25.0}, {135.0, 6.0, 26.0},
 	{140.0, 6.2, 27.0}, {145.0, 6.4, 28.0}, {105.0, 4.8, 19.0}, {108.0, 5.0, 20.0},
 	{110.0, 5.1, 21.0}, {115.0, 5.3, 22.0}, {120.0, 5.5, 23.0}, {125.0, 5.7, 24.0}
-	};
+	};*/
 
 	double** x = copy_static_memory(xx);
-	double** y = copy_static_memory(yy);
+	//double** y = copy_static_memory(yy);
 
 	Matrix X(x, train_rows_x, train_cols_x, "X");
-	Matrix Y(y, train_rows_y, train_cols_y, "Y");
+	//Matrix Y(y, train_rows_y, train_cols_y, "Y");
 
 	// Предобработка
-	Dataset data(X, Y);
+	Dataset data(X);
 	StandardScaler scaler(data);
-	scaler.split(0.7);
+	scaler.split(1, false);
     scaler.standartNormalize();
 
 	// Создаем и обучаем модель
-	LinearRegression model(data);
-	model.train("gd");
-	model.predict();
+	KMeans model(data, 3, 10);
+	model.train("pp");
+	/*model.predict();*/
 	model.loss();
 	data.info();
 
 
 	free_memory_(x, train_rows_x);
-	free_memory_(y, train_rows_y);
+	//free_memory_(y, train_rows_y);
 
 	return 0;
 }

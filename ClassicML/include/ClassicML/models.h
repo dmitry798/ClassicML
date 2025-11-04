@@ -136,3 +136,31 @@ public:
 
 	~KnnRegression();
 };
+
+class KMeans: public Models
+{
+private:
+
+	int k;
+
+	int max_iters;
+
+	Matrix centroids;
+
+	Distance dist_method;
+
+public:
+
+	KMeans(Dataset& data, int k, int max_iters);
+
+	//тестирование
+	void train(string method = "base", string distance = "evklid");
+
+	//прогноз
+	Matrix predict(Matrix& X_predict, string distance = "evklid");
+
+	Matrix getCentroids();
+
+	void loss();
+
+};

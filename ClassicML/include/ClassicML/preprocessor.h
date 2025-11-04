@@ -29,6 +29,7 @@ public:
 	void info();
 
 	Dataset(Matrix& x, Matrix& y);
+	Dataset(Matrix& x);
 };
 
 class StandardScaler

@@ -15,6 +15,7 @@ try:
         LogisticRegression,
         Knn,
         KnnRegression,
+        KMeans,
         sigmoid,
         softmax,
         one_hot_encoder,
@@ -142,7 +143,7 @@ try:
         'Matrix', 'Dataset', 'StandardScaler', 'Errors',
         'LinearRegression', 'LogisticRegression', 
         'Knn', 'KnnRegression',
-        'KNNClassifier', 'KNNRegressor',
+        'KNNClassifier', 'KNNRegressor', 'KMeans',
         'sigmoid', 'softmax', 'one_hot_encoder', 'decoder_ohe',
         'mean', 'stddev', 'mode', 'sort',
     ]

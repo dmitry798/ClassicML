@@ -204,3 +204,7 @@ Matrix sort(Matrix& matrix);
 
 //мода элементов
 int mode(const Matrix& col);
+
+int max_idx(const Matrix& x);
+
+int min_idx(const Matrix& x);

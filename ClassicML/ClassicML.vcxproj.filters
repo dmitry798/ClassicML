@@ -47,6 +47,9 @@
     <ClCompile Include="bindings.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\models\KMeans.cpp">
+      <Filter>src\models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\ClassicML.h">

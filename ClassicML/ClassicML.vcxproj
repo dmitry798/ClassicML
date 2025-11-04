@@ -134,6 +134,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\matrix.cpp" />
     <ClCompile Include="src\models.cpp" />
+    <ClCompile Include="src\models\KMeans.cpp" />
     <ClCompile Include="src\models\KnnClassifier.cpp" />
     <ClCompile Include="src\models\KnnRegression.cpp" />
     <ClCompile Include="src\models\LinearRegression.cpp" />
