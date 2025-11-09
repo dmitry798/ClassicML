@@ -39,6 +39,6 @@ public:
 
 	void errorsLogClassifier(string name, double threshold = 0.5) const;
 
-	void errorsKnnClassifier() const;
+	void errorsKnnClassifier(double threshold = 0.5) const;
 };
 

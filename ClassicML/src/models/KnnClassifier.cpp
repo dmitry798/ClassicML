@@ -26,7 +26,9 @@ Matrix Knn::predict(string distance)
             for (int j = 0; j < Y_train.getCols(); j++)
             {
                 if (Y_train(i, j) == 1)
+                {
                     concate(i, 1) = j;
+                }
             }
         }
         //сортируем по расстоянию
@@ -37,7 +39,9 @@ Matrix Knn::predict(string distance)
         //выбираем часто встречающиеся
         int pred = 0;
         if (weighted == "uniform")
+        {
             pred = mode(sorted.sliceCols(1, 2));
+        }
         //наиболее весомые
         else if (weighted == "distance")
         {
@@ -58,7 +62,9 @@ Matrix Knn::predict(string distance)
                 for (int i = 0; i < classes.getRows(); i++)
                 {
                     if (classes[i] == cls)
+                    {
                         weight_sum += weights[i];
+                    }
                 }
 
                 if (weight_sum > max_weight_sum)
@@ -150,10 +156,10 @@ Matrix Knn::predict(Matrix& X_predict, string distance)
     return Y_pred;
 }
 
-void Knn::loss(double threshold)
+void Knn::loss(double threshold = 0.5)
 {
     Y_test = DecoderOHE(Y_test);
-    error.errorsKnnClassifier();
+    error.errorsKnnClassifier(threshold);
 }
 
 Knn::~Knn() {}

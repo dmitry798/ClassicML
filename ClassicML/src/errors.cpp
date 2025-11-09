@@ -156,10 +156,13 @@ void Errors::errorsLogClassifier(string name, double threshold) const
 
 }
 
-void Errors::errorsKnnClassifier() const
+void Errors::errorsKnnClassifier(double threshold) const
 {
     cout <<
-        "accuracy: " << accuracyMultiClss() << endl
+        "accuracy: " << accuracyMultiClss() << endl <<
+        "precision: " << precision(threshold) << endl <<
+        "recall: " << recall(threshold) << endl <<
+        "f1Score: " << f1Score(threshold) << endl
         << endl;
 }
 
