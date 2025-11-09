@@ -27,8 +27,67 @@ Dataset::Dataset(Matrix& x) :
 
 void Dataset::info()
 {
-	Y_test.print("Y_test: ");
-	Y_pred.print("Y_predict: ");
+	cout << "  Y_test  |   Y_pred\n";
+
+	int rows = Y_test.getRows();
+	int cols_test = Y_test.getCols();
+	int cols_pred = Y_pred.getCols();
+	int max_display = 15;  // Максимум строк для вывода
+
+	for (int i = 0; i < rows && i < max_display; i++)
+	{
+		// Номер строки
+		cout << "  [" << i << "] ";
+
+		// Y_test
+		if (cols_test == 1)
+		{
+			// Одна колонка - выводим как число
+			cout << Y_test[i];
+		}
+		else
+		{
+			// Несколько колонок - выводим вектор
+			cout << "[";
+			for (int j = 0; j < cols_test; j++)
+			{
+				cout << Y_test(i, j);
+				if (j < cols_test - 1) cout << " ";
+			}
+			cout << "]";
+		}
+
+		// Разделитель
+		cout << "   |   ";
+
+		// Y_pred
+		if (cols_pred == 1)
+		{
+			// Одна колонка - выводим как число
+			cout << Y_pred[i];
+		}
+		else
+		{
+			// Несколько колонок - выводим вектор
+			cout << "[";
+			for (int j = 0; j < cols_pred; j++)
+			{
+				cout << Y_pred(i, j);
+				if (j < cols_pred - 1) cout << " ";
+			}
+			cout << "]";
+		}
+
+		cout << endl;
+	}
+
+	// Если строк больше max_display, показываем многоточие
+	if (rows > max_display)
+	{
+		cout << "        ...        |       ...\n";
+	}
+
+	cout << "Total samples: " << rows << endl;
 }
 
 /************************************************************************************************************************************/

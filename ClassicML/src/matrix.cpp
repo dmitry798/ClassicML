@@ -379,13 +379,14 @@ void Matrix::copyVector(double* matrix)
 
 void Matrix::print(string text) const
 {
-	cout << text << endl << "[";
+	cout << text << endl;
 	for (int i = 0; i < dim; i++)
 	{
-		cout << matrix[i] << ", ";
-		if((i + 1) % (cols + 8) == 0) cout << endl;
+		cout << matrix[i] << " ";
+		if ((i + 1) % cols == 0)
+			cout << endl;
 	}
-	cout << "]" << endl;
+	cout << endl;
 }
 
 void Matrix::reshape() const

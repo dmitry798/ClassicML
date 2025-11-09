@@ -24,8 +24,10 @@ Matrix Knn::predict(string distance)
         {
             concate(i, 0) = dist[i];
             for (int j = 0; j < Y_train.getCols(); j++)
+            {
                 if (Y_train(i, j) == 1)
                     concate(i, 1) = j;
+            }
         }
         //сортируем по расстоянию
         concate.sortRows(0);

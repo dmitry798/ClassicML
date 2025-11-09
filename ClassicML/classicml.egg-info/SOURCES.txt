@@ -19,3 +19,8 @@ src/models/KnnClassifier.cpp
 src/models/KnnRegression.cpp
 src/models/LinearRegression.cpp
 src/models/LogisticRegression.cpp
+src/models/KMeans.cpp
+src/models/KnnClassifier.cpp
+src/models/KnnRegression.cpp
+src/models/LinearRegression.cpp
+src/models/LogisticRegression.cpp

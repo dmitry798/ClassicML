@@ -25,7 +25,21 @@ try:
         mode,
         sort,
     )
-    
+    def numpy_to_matrix(arr):
+        if arr.ndim == 1:
+            # 1D array -> column vector
+            mat = Matrix(len(arr), 1, "")
+            for i in range(len(arr)):
+                mat[i] = float(arr[i])
+        else:
+            # 2D array
+            mat = Matrix(arr.shape[0], arr.shape[1], "")
+            for i in range(arr.shape[0]):
+                for j in range(arr.shape[1]):
+                    mat(i, j)  # Используем оператор () для присваивания
+                    idx = i * arr.shape[1] + j
+                    mat[idx] = float(arr[i, j])
+        return mat
     # ========== Wrapper для Matrix с автоматической конвертацией ==========
     class Matrix(_Matrix):
         """Matrix class with automatic NumPy conversion"""
@@ -113,7 +127,7 @@ try:
             return arr
     
     # ========== Wrapper для Dataset с автоматической конвертацией ==========
-    class Dataset(_Dataset):
+    class Dataset(_Dataset, ):
         """Dataset class with automatic NumPy conversion"""
         
         def __init__(self, X, Y):
@@ -132,6 +146,17 @@ try:
             
             # Вызываем оригинальный конструктор
             super().__init__(X, Y)
+            
+    def _matrix_to_numpy(self):
+        """Convert C++ Matrix to NumPy array"""
+        rows, cols = self.get_rows(), self.get_cols()
+        arr = np.zeros((rows, cols), dtype=np.float64)
+        for i in range(rows):
+            for j in range(cols):
+                arr[i, j] = self(i, j)
+        return arr
+    
+    _Matrix.to_numpy = _matrix_to_numpy    
     
     # Aliases для удобства
     KNNClassifier = Knn
@@ -145,10 +170,120 @@ try:
         'Knn', 'KnnRegression',
         'KNNClassifier', 'KNNRegressor', 'KMeans',
         'sigmoid', 'softmax', 'one_hot_encoder', 'decoder_ohe',
-        'mean', 'stddev', 'mode', 'sort',
+        'mean', 'stddev', 'mode', 'sort', 'numpy_to_matrix',
     ]
 
 except ImportError as e:
     print(f"ERROR: Could not import C++ module: {e}")
     print("The library is not built. Run: pip install -e .")
     raise
+
+# ============================================================
+# ПАТЧ ДЛЯ JUPYTER (УЛУЧШЕННАЯ ВЕРСИЯ)
+# ============================================================
+
+def _apply_jupyter_patch():
+    """Патчит C++ stdout для работы в Jupyter"""
+    import sys
+    import os
+    
+    # Проверяем, запущены ли мы в Jupyter
+    try:
+        from IPython import get_ipython
+        ipython = get_ipython()
+        if ipython is None:
+            return  # Не в Jupyter, патч не нужен
+    except ImportError:
+        return  # IPython не установлен
+    
+    # Патч для loss() всех моделей
+    model_classes = [
+        LinearRegression,
+        LogisticRegression,
+        Knn,
+        KnnRegression,
+        KMeans,
+    ]
+    
+    for model_class in model_classes:
+        if hasattr(model_class, 'loss'):
+            original_loss = model_class.loss
+            
+            def make_patched_loss(orig):
+                def patched(self, *args, **kwargs):
+                    # Перенаправляем C stdout в Python
+                    import io
+                    from contextlib import redirect_stdout
+                    
+                    # Сохраняем текущий stdout
+                    old_stdout_fd = os.dup(1)
+                    
+                    # Создаём pipe
+                    read_pipe, write_pipe = os.pipe()
+                    
+                    # Перенаправляем stdout файловый дескриптор
+                    os.dup2(write_pipe, 1)
+                    
+                    # Вызываем оригинальную функцию
+                    result = orig(self, *args, **kwargs)
+                    
+                    # Закрываем write pipe
+                    os.close(write_pipe)
+                    
+                    # Читаем из read pipe
+                    output = os.read(read_pipe, 4096).decode('utf-8')
+                    os.close(read_pipe)
+                    
+                    # Восстанавливаем stdout
+                    os.dup2(old_stdout_fd, 1)
+                    os.close(old_stdout_fd)
+                    
+                    # Выводим захваченный текст
+                    if output:
+                        print(output, end='')
+                    
+                    return result
+                
+                return patched
+            
+            model_class.loss = make_patched_loss(original_loss)
+    
+    # Патч для Dataset.info()
+    original_info = Dataset.info
+    
+    def patched_info(self):
+        import io
+        
+        # Сохраняем текущий stdout
+        old_stdout_fd = os.dup(1)
+        
+        # Создаём pipe
+        read_pipe, write_pipe = os.pipe()
+        
+        # Перенаправляем stdout файловый дескриптор
+        os.dup2(write_pipe, 1)
+        
+        # Вызываем оригинальную функцию
+        result = original_info(self)
+        
+        # Закрываем write pipe
+        os.close(write_pipe)
+        
+        # Читаем из read pipe
+        output = os.read(read_pipe, 4096).decode('utf-8')
+        os.close(read_pipe)
+        
+        # Восстанавливаем stdout
+        os.dup2(old_stdout_fd, 1)
+        os.close(old_stdout_fd)
+        
+        # Выводим захваченный текст
+        if output:
+            print(output, end='')
+        
+        return result
+    
+    Dataset.info = patched_info
+
+# Применяем патч автоматически
+_apply_jupyter_patch()

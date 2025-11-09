@@ -9,7 +9,7 @@ using std::string;
 #include <type_traits>
 #include <stdexcept>
 
-// СУММА МАТРИЦ В ВИДЕ ВЫРАЖЕНИЯ
+//сумма матриц
 template<typename A, typename B>
 struct MatrxSumOp {
     MatrxSumOp(const A& a, const B& b)
@@ -34,7 +34,7 @@ struct MatrxSumOp {
     double operator()(int i, int j) const { return (*this)[i * getCols() + j]; }
 };
 
-// РАЗНОСТЬ МАТРИЦ
+//разность матриц
 template<typename A, typename B>
 struct MatrxDifOp {
     MatrxDifOp(const A& a, const B& b)
