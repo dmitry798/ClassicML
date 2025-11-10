@@ -1,0 +1,6 @@
+pyproject.toml
+src/classicml.egg-info/PKG-INFO
+src/classicml.egg-info/SOURCES.txt
+src/classicml.egg-info/dependency_links.txt
+src/classicml.egg-info/requires.txt
+src/classicml.egg-info/top_level.txt
