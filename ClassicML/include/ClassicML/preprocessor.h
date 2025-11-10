@@ -29,9 +29,10 @@ public:
 	void info();
 
 	Dataset(Matrix& x, Matrix& y);
+	Dataset(Matrix& x);
 };
 
-class StandartScaler
+class StandardScaler
 {
 private:
 	
@@ -42,7 +43,7 @@ private:
 
 public:
 
-	StandartScaler(Dataset& sharedData);
+	StandardScaler(Dataset& sharedData);
 
 	//нормализация данных
 	Matrix normalize(const Matrix& z, const Matrix& mean_z, const Matrix& std_z);

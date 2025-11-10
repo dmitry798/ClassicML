@@ -35,8 +35,10 @@ public:
 
 	double f1Score(double threshold = 0.5) const;
 
+	double inertia(Matrix centroids) const;
+
 	void errorsLogClassifier(string name, double threshold = 0.5) const;
 
-	void errorsKnnClassifier() const;
+	void errorsKnnClassifier(double threshold = 0.5) const;
 };
 

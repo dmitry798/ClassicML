@@ -13,10 +13,81 @@ Dataset::Dataset(Matrix& x, Matrix& y) :
 	W.random();
 }
 
+Dataset::Dataset(Matrix& x) :
+	X(move(x)),
+	mean_x(X.getCols(), 1, "mean_x"),
+	std_x(X.getCols(), 1, "std_x"),
+	mean_y(Y.getCols(), 1, "mean_y"),
+	std_y(Y.getCols(), 1, "std_y"),
+	W(X.getCols(), Y.getCols(), "W")
+{
+	srand(time(NULL));
+	W.random();
+}
+
 void Dataset::info()
 {
-	Y_test.print("Y_test: ");
-	Y_pred.print("Y_predict: ");
+	cout << "  Y_test  |   Y_pred\n";
+
+	int rows = Y_test.getRows();
+	int cols_test = Y_test.getCols();
+	int cols_pred = Y_pred.getCols();
+	int max_display = 15;  // Максимум строк для вывода
+
+	for (int i = 0; i < rows && i < max_display; i++)
+	{
+		// Номер строки
+		cout << "  [" << i << "] ";
+
+		// Y_test
+		if (cols_test == 1)
+		{
+			// Одна колонка - выводим как число
+			cout << Y_test[i];
+		}
+		else
+		{
+			// Несколько колонок - выводим вектор
+			cout << "[";
+			for (int j = 0; j < cols_test; j++)
+			{
+				cout << Y_test(i, j);
+				if (j < cols_test - 1) cout << " ";
+			}
+			cout << "]";
+		}
+
+		// Разделитель
+		cout << "   |   ";
+
+		// Y_pred
+		if (cols_pred == 1)
+		{
+			// Одна колонка - выводим как число
+			cout << Y_pred[i];
+		}
+		else
+		{
+			// Несколько колонок - выводим вектор
+			cout << "[";
+			for (int j = 0; j < cols_pred; j++)
+			{
+				cout << Y_pred(i, j);
+				if (j < cols_pred - 1) cout << " ";
+			}
+			cout << "]";
+		}
+
+		cout << endl;
+	}
+
+	// Если строк больше max_display, показываем многоточие
+	if (rows > max_display)
+	{
+		cout << "        ...        |       ...\n";
+	}
+
+	cout << "Total samples: " << rows << endl;
 }
 
 /************************************************************************************************************************************/
@@ -24,9 +95,9 @@ void Dataset::info()
 
 #include "../include/ClassicML/macros.h"
 
-StandartScaler::StandartScaler(Dataset& sharedData) : data(sharedData) {}
+StandardScaler::StandardScaler(Dataset& sharedData) : data(sharedData) {}
 
-void StandartScaler::split(double ratio, bool random)
+void StandardScaler::split(double ratio, bool random)
 {
 	if (random)
 		X.randomShuffle(Y);
@@ -68,16 +139,16 @@ void StandartScaler::split(double ratio, bool random)
 	}
 }
 
-void StandartScaler::standartNormalize()
+void StandardScaler::standartNormalize()
 {
 	transform(X_train, X_test, X_train_norm, X_test_norm, mean_x, std_x);
 	transform(Y_train, Y_test, Y_train_norm, Y_test_norm, mean_y, std_y);
 }
 
-void StandartScaler::transform(const Matrix& Z_train, const Matrix& Z_test, Matrix& Z_train_norm, Matrix& Z_test_norm, Matrix& mean_z, Matrix& std_z)
+void StandardScaler::transform(const Matrix& Z_train, const Matrix& Z_test, Matrix& Z_train_norm, Matrix& Z_test_norm, Matrix& mean_z, Matrix& std_z)
 {
-	mean_z.mean(Z_train);
-	std_z.std(Z_train, mean_z);
+	mean_z = mean(Z_train);
+	std_z = stddev(Z_train, mean_z);
 
 	Z_train_norm = Matrix(Z_train.getRows(), Z_train.getCols(), "train_norm");
 	Z_train_norm = normalize(Z_train, mean_z, std_z);
@@ -86,7 +157,7 @@ void StandartScaler::transform(const Matrix& Z_train, const Matrix& Z_test, Matr
 	Z_test_norm = normalize(Z_test, mean_z, std_z);
 }
 
-Matrix StandartScaler::normalize(const Matrix& z, const Matrix& mean_z, const Matrix& std_z)
+Matrix StandardScaler::normalize(const Matrix& z, const Matrix& mean_z, const Matrix& std_z)
 {
 	Matrix normalized_z = z;
 	int cols = z.getCols();
@@ -103,7 +174,7 @@ Matrix StandartScaler::normalize(const Matrix& z, const Matrix& mean_z, const Ma
 	return normalized_z;
 }
 
-Matrix StandartScaler::denormalize(const Matrix& z, const Matrix& mean_z, const Matrix& std_z)
+Matrix StandardScaler::denormalize(const Matrix& z, const Matrix& mean_z, const Matrix& std_z)
 {
 	Matrix denormalized_z = z;
 	int cols = z.getCols();
@@ -162,7 +233,10 @@ Matrix DecoderOHE(Matrix& Z)
 	{
 		for (int j = 0; j < Z.getCols(); j++)
 			if (Z(i, j) == 1)
-				concate[i] = j + 1;
+			{
+				concate[i] = j;
+				break;
+			}
 	}
 	return concate;
 }

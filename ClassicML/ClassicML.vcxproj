@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>Default</LanguageStandard>
       <AdditionalIncludeDirectories>include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -129,10 +129,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="bindings.cpp" />
     <ClCompile Include="src\errors.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\matrix.cpp" />
     <ClCompile Include="src\models.cpp" />
+    <ClCompile Include="src\models\KMeans.cpp" />
     <ClCompile Include="src\models\KnnClassifier.cpp" />
     <ClCompile Include="src\models\KnnRegression.cpp" />
     <ClCompile Include="src\models\LinearRegression.cpp" />
@@ -143,6 +145,7 @@
   <ItemGroup>
     <ClInclude Include="include\ClassicML.h" />
     <ClInclude Include="include\ClassicML\errors.h" />
+    <ClInclude Include="include\ClassicML\expr.h" />
     <ClInclude Include="include\ClassicML\macros.h" />
     <ClInclude Include="include\ClassicML\matrix.h" />
     <ClInclude Include="include\ClassicML\matrxop.h" />

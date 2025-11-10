@@ -1,5 +1,6 @@
 ﻿#include "../include/ClassicML/optimization.h"
 #include "../include/ClassicML/macros.h"
+#include "../include/ClassicML/expr.h"
 
 /************************************************************************************************************************************/
 
@@ -222,7 +223,7 @@ void Optimizer::sgdNesterov(int iters, double learning_rate, int mini_batch, dou
 void Optimizer::svd(Matrix& U, Matrix& s, Matrix& VT)
 {
 	Matrix X_current(X_train.getRows(), X_train.getCols(), "X_centred");
-	mean_x.mean(X_train);
+	mean_x = mean(X_train);
 	//центровка X_train
 	for (int i = 0; i < X_train.getCols(); i++)
 	{

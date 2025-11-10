@@ -14,12 +14,12 @@ void LinearRegression::train(const string& method, int iters, double lr, int min
         fit.svd(U, s, VT);
         W = VT.transpose() * s * U.transpose() * Y_train;
     }
-    else trainer.choice_train(method, fit, iters, lr, mini_batch, gamma);
+    else trainer.choice_train(method, fit, iters, lr, mini_batch, gamma, 1);
 }
 
 Matrix LinearRegression::predict()
 {
-    StandartScaler scaler(data);
+    StandardScaler scaler(data);
     Y_pred = scaler.denormalize(X_test_norm * W, mean_y, std_y);
     return Y_pred;
 }
