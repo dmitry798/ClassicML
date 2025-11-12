@@ -33,33 +33,33 @@ ClassicML — компактная библиотека классическог
 
 - include/ClassicML/
     
-    - matrix.h, matrxop.h: собственная матричная алгебра (хранение, слайсы строк/столбцов, сортировки, unique(), трансформации, transpose и др.).matrix.h​
+    - matrix.h, matrxop.h: собственная матричная алгебра (хранение, слайсы строк/столбцов, сортировки, unique(), трансформации, transpose и др.).
         
-    - preprocessor.h: StandardScaler, OneHotEncoder, split.
+    - preprocessor.h: базовый контейнер данных и StandardScaler, OneHotEncoder, split.
         
-    - models.h: базовый контейнер данных и интерфейсы моделей/тренера/дистанций.LogisticRegression.cpp​
+    - models.h: интерфейсы моделей/тренера/дистанций.
         
     - optimization.h: API оптимизаторов (GD, SGD, Momentum, Nesterov, SVD).
         
     - errors.h: метрики и отчёты качества.
         
-    - ClassicML.h: единая точка подключения заголовков.ClassicML.h​
+    - ClassicML.h: единая точка подключения заголовков.
         
 - src/
     
-    - matrix.cpp: реализация матричных операций.KnnClassifier.cpp​
+    - matrix.cpp: реализация матричных операций.
         
     - preprocessor.cpp: scaler, one‑hot, сплит и нормализация/денормализация.
         
     - optimization.cpp: GD, SGD, Momentum, Nesterov, SVD тренинг.
         
-    - models.cpp: общий Trainer (выбор оптимизатора), единый predict c корректной нормализацией.models.cpp​
+    - models.cpp: общий Trainer (выбор оптимизатора), единый predict c корректной нормализацией.
         
-    - LinearRegression.cpp, LogisticRegression.cpp, KnnClassifier.cpp, KnnRegression.cpp, KMeans.cpp: реализации моделей.errors.h+3​
+    - LinearRegression.cpp, LogisticRegression.cpp, KnnClassifier.cpp, KnnRegression.cpp, KMeans.cpp: реализации моделей.
         
-    - errors.cpp: метрики и печать отчётов.errors.cpp​
+    - errors.cpp: метрики и печать отчётов.
         
-    - main.cpp: примеры использования (Titanic и синтетика).main.cpp​
+    - main.cpp: примеры использования (Titanic и синтетика).
         
 
 ## Сборка
@@ -68,7 +68,7 @@ ClassicML — компактная библиотека классическог
         
 - Быстрый старт:
     
-    - Чтобы установить библиотеку, нужно прописать в корне проекта (../ClassicML/ClassicML) команду pip install .
+    - Чтобы установить библиотеку, нужно прописать в корне проекта (cd /ClassicML/ClassicML) команду 'pip install .'
     - Библиотека готова к использованию!
 
 ## Результаты
