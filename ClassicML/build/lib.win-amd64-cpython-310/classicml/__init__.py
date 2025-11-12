@@ -77,7 +77,9 @@ try:
                     
                     # Fill with data
                     arr = np.ascontiguousarray(arr, dtype=np.float64)
-                    self.from_numpy(arr)
+                    for i in range(rows):
+                        for j in range(cols):
+                            self[i * cols + j] = float(arr[i, j])
                 else:
                     raise ValueError(f"Cannot create Matrix from type {type(arg)}")
                     
@@ -99,8 +101,9 @@ try:
                     super().__init__(rows, cols, name)
                     
                     # Fill with data
-                    arr = np.ascontiguousarray(arr, dtype=np.float64)
-                    self.from_numpy(arr)
+                    flat_data = np.ascontiguousarray(arr.flatten(), dtype=np.float64)
+                    # Предполагая что у Matrix есть метод set_data или доступ к внутреннему буферу
+                    self.copyVector(flat_data)
                 else:
                     raise ValueError(f"Invalid arguments: {type(args[0])}, {type(args[1])}")
                     
@@ -114,8 +117,13 @@ try:
                 raise ValueError(f"Invalid number of arguments: {len(args)}")
         
         def to_numpy(self):
-            """Convert Matrix to NumPy array (zero-copy when possible)"""
-            return np.array(self, copy=False)
+            """Convert Matrix to NumPy array"""
+            rows, cols = self.get_rows(), self.get_cols()
+            arr = np.zeros((rows, cols), dtype=np.float64)
+            for i in range(rows):
+                for j in range(cols):
+                    arr[i, j] = self(i, j)
+            return arr
     
     # ========== Wrapper для Dataset с автоматической конвертацией ==========
     class Dataset(_Dataset, ):
