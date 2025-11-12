@@ -29,18 +29,6 @@ PYBIND11_MODULE(_classicml, m) {
             "  name: Optional name for the matrix")
         .def(py::init<const Matrix&>(), "Copy constructor")
 
-        // Buffer protocol for NumPy integration
-        .def_buffer([](Matrix& mat) -> py::buffer_info {
-        return py::buffer_info(
-            nullptr,
-            sizeof(double),
-            py::format_descriptor<double>::format(),
-            2,
-            { mat.getRows(), mat.getCols() },
-            { sizeof(double) * mat.getCols(), sizeof(double) }
-        );
-            })
-
         // Properties
         .def("get_rows", &Matrix::getRows, "Get number of rows")
         .def("get_cols", &Matrix::getCols, "Get number of columns")
@@ -60,7 +48,36 @@ PYBIND11_MODULE(_classicml, m) {
         mat[i] = val;
             }, py::arg("i"), py::arg("value"), "Set element by linear index")
         .def("__len__", [](const Matrix& mat) { return mat.getDim(); })
+        .def("from_numpy", [](Matrix& self, py::array_t<double> arr) {
+            py::buffer_info buf = arr.request();
 
+            if (buf.ndim != 2)
+                throw std::runtime_error("Array must be 2D");
+
+            int rows = buf.shape[0];
+            int cols = buf.shape[1];
+
+            // Resize matrix если нужно
+            if (self.getRows() != rows || self.getCols() != cols) {
+                self = Matrix(rows, cols);  // Создаем новую матрицу
+            }
+            int dim = rows * cols;
+            // Прямое копирование памяти
+            double* src = static_cast<double*>(buf.ptr);
+            for (int i = 0; i < dim; ++i) {
+                self[i] = src[i];
+            }
+                }, "Copy data from NumPy array")
+        .def_buffer([](Matrix& mat) -> py::buffer_info {
+            return py::buffer_info(
+                mat.getData(),
+                sizeof(double),
+                py::format_descriptor<double>::format(),
+                2,
+                { mat.getRows(), mat.getCols() },
+                { sizeof(double) * mat.getCols(), sizeof(double) }
+            );
+                })
         // Matrix operations - ИСПОЛЬЗУЕМ ЛЯМБДЫ ДЛЯ MSVC
         .def("transpose", [](Matrix& mat) { return mat.transpose(); },
             "Transpose the matrix")
