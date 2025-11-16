@@ -153,23 +153,20 @@ void KMeans::train(string method, string rho)
     Y_pred = labels;
 }
 
-Matrix KMeans::predict(Matrix& X_predict, string rho)
+void KMeans::predict(Matrix& X_predict, string rho)
 {
     StandardScaler scaler(data);
 
-    Matrix mean_(X_predict.getCols(), 1, "mean"); Matrix std_(X_predict.getCols(), 1, "std");
-    mean_ = mean(X_predict); std_ = stddev(X_predict, mean_);
-
-    Matrix&& X_predict_norm = scaler.normalize(X_predict, mean_, std_);
+    Matrix&& X_predict_norm = scaler.normalize(X_predict, mean_x, std_x);
 
 
     Y_pred = Matrix(X_predict_norm.getRows(), Y_train.getCols());
 
-    Matrix labels(X_train_norm.getRows(), 1, "labels");
-    for (int j = 0; j < X_train_norm.getRows(); j++)
+    Matrix labels(X_predict_norm.getRows(), 1, "labels");
+    for (int j = 0; j < X_predict_norm.getRows(); j++)
     {
         Matrix dist(k, 1, "distances");
-        Matrix point = X_train_norm.sliceRow(j, j + 1);
+        Matrix point = X_predict_norm.sliceRow(j, j + 1);
 
         for (int c = 0; c < k; c++)
         {
@@ -190,7 +187,7 @@ Matrix KMeans::predict(Matrix& X_predict, string rho)
 
         labels[j] = cluster_ind;
     }
-    return labels;
+    Y_pred = labels;
 }
 
 Matrix KMeans::getCentroids()

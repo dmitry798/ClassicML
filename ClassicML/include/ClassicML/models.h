@@ -157,7 +157,7 @@ public:
 	void train(string method = "base", string distance = "evklid");
 
 	//прогноз
-	Matrix predict(Matrix& X_predict, string distance = "evklid");
+	void predict(Matrix& X_predict, string distance = "evklid");
 
 	Matrix getCentroids();
 

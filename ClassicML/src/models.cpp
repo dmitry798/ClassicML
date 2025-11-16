@@ -27,10 +27,7 @@ Matrix Models::predict(Matrix& X_predict)
 {
     StandardScaler scaler(data);
 
-    Matrix mean_(X_predict.getCols(), 1, "mean"); Matrix std_(X_predict.getCols(), 1, "std");
-    mean_ = mean(X_predict); std_ = stddev(X_predict, mean_);
-
-    Matrix&& X_predict_norm = scaler.normalize(X_predict, mean_, std_);
+    Matrix&& X_predict_norm = scaler.normalize(X_predict, mean_x, std_x);
 
     return X_predict_norm * W;
 }
