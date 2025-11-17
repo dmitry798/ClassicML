@@ -1,6 +1,5 @@
 ﻿#include "../include/ClassicML/errors.h"
 #include <cmath>
-#include "../include/ClassicML/expr.h"
 
 Errors::Errors(Dataset& data): data(data) {}
 
