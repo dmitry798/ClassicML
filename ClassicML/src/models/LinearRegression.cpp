@@ -26,7 +26,9 @@ Matrix LinearRegression::predict()
 
 Matrix LinearRegression::predict(Matrix& X_predict)
 {
-    return Models::predict(X_predict);
+    StandardScaler scaler(data);
+    Y_pred = scaler.denormalize(Models::predict(X_predict) * W, mean_y, std_y);
+    return Y_pred;
 }
 
 void LinearRegression::loss()
